@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoItLater | Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">✓</div>
+            <div>
+                <h1>DoItLater</h1>
+                <p>Organize your day, one task at a time.</p>
+            </div>
+        </div>
+
+        <button id="refreshButton" class="icon-button" title="Refresh tasks">
+            ↻
+        </button>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">TASK DASHBOARD</p>
+                <h2>What needs to be done?</h2>
+                <p class="hero-text">
+                    Create, manage, and complete your tasks with ease.
+                </p>
+            </div>
+
+            <div class="date-box">
+                <span id="todayLabel"></span>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+            <div class="summary-card">
+                <span class="summary-label">Total tasks</span>
+                <strong id="totalTasks">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span class="summary-label">Open tasks</span>
+                <strong id="openTasks">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span class="summary-label">Completed</span>
+                <strong id="completedTasks">0</strong>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <div class="panel form-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">NEW TASK</p>
+                        <h3>Create a task</h3>
+                    </div>
+                </div>
+
+                <form id="taskForm">
+                    <label for="title">Task title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="e.g. Finish project documentation"
+                        minlength="2"
+                        maxlength="255"
+                        required
+                    >
+
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Add some details..."
+                        maxlength="1050"
+                        rows="5"
+                    ></textarea>
+
+                    <div class="form-row">
+                        <div>
+                            <label for="dueDate">Due date</label>
+                            <input type="date" id="dueDate" name="dueDate">
+                        </div>
+
+                        <div>
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority" required>
+                                <option value="HIGH">High</option>
+                                <option value="MEDIUM" selected>Medium</option>
+                                <option value="LOW">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">
+                            Add task
+                        </button>
+                    </div>
+
+                    <p id="formMessage" class="form-message"></p>
+                </form>
+            </div>
+
+            <div class="panel tasks-panel">
+                <div class="tasks-heading">
+                    <div>
+                        <p class="eyebrow">YOUR TASKS</p>
+                        <h3>Task list</h3>
+                    </div>
+
+                    <select id="filterSelect" class="filter-select">
+                        <option value="ALL">All tasks</option>
+                        <option value="OPEN">Open</option>
+                        <option value="COMPLETE">Completed</option>
+                    </select>
+                </div>
+
+                <div id="loadingMessage" class="empty-state">
+                    Loading tasks...
+                </div>
+
+                <div id="tasksList" class="tasks-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="editModal" class="modal hidden">
+        <div class="modal-backdrop" data-close-edit></div>
+
+        <section class="modal-panel">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">TASK EDITOR</p>
+                    <h3>Edit task</h3>
+                </div>
+
+                <button class="modal-close" type="button" data-close-edit>
+                    ×
+                </button>
+            </div>
+
+            <form id="editTaskForm">
+                <input type="hidden" id="editTaskId">
+
+                <label for="editTitle">Task title</label>
+                <input
+                    type="text"
+                    id="editTitle"
+                    minlength="2"
+                    maxlength="255"
+                    required
+                >
+
+                <label for="editDescription">Description</label>
+                <textarea
+                    id="editDescription"
+                    maxlength="1050"
+                    rows="5"
+                ></textarea>
+
+                <div class="form-row">
+                    <div>
+                        <label for="editDueDate">Due date</label>
+                        <input type="date" id="editDueDate">
+                    </div>
+
+                    <div>
+                        <label for="editPriority">Priority</label>
+                        <select id="editPriority" required>
+                            <option value="HIGH">High</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LOW">Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="editStatus">Status</label>
+                <select id="editStatus" required>
+                    <option value="OPEN">Open</option>
+                    <option value="COMPLETE">Complete</option>
+                </select>
+
+                <p id="editFormMessage" class="form-message"></p>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-button" data-close-edit>
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="primary-button" id="saveEditButton">
+                        Save changes
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="deleteModal" class="modal hidden">
+        <div class="modal-backdrop" data-close-delete></div>
+
+        <section class="modal-panel delete-panel">
+            <div class="delete-icon">!</div>
+
+            <h3>Delete this task?</h3>
+            <p>
+                This action cannot be undone. The selected task will be permanently
+                removed.
+            </p>
+
+            <strong id="deleteTaskTitle"></strong>
+
+            <input type="hidden" id="deleteTaskId">
+
+            <div class="modal-actions">
+                <button type="button" class="secondary-button" data-close-delete>
+                    Cancel
+                </button>
+
+                <button type="button" class="danger-button" id="confirmDeleteButton">
+                    Delete task
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
