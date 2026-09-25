@@ -42,39 +42,23 @@ filterSelect.addEventListener("change", renderTasks);
 refreshButton.addEventListener("click", loadTasks);
 confirmDeleteButton.addEventListener("click", deleteTask);
 
-document.querySelectorAll("[data-close-edit]").forEach(button => {
-    button.addEventListener("click", closeEditModal);
-});
-
-document.querySelectorAll("[data-close-delete]").forEach(button => {
-    button.addEventListener("click", closeDeleteModal);
-});
+document.querySelectorAll("[data-close-edit]").forEach(button => button.addEventListener("click", closeEditModal));
+document.querySelectorAll("[data-close-delete]").forEach(button => button.addEventListener("click", closeDeleteModal));
 
 async function loadTasks() {
-    if (loadingMessage) {
-        loadingMessage.style.display = "block";
-        loadingMessage.textContent = "Loading tasks...";
-    }
-
-    if (tasksList) {
-        tasksList.innerHTML = "";
-    }
+    loadingMessage.style.display = "block";
+    loadingMessage.textContent = "Loading tasks...";
+    tasksList.innerHTML = "";
 
     try {
         const response = await fetch(API_URL);
-
-        if (!response.ok) {
-            throw new Error("Could not load tasks.");
-        }
+        if (!response.ok) throw new Error("Could not load tasks.");
 
         tasks = await response.json();
         renderTasks();
         updateSummary();
     } catch (error) {
-        if (loadingMessage) {
-            loadingMessage.textContent =
-                "Could not connect to the backend. Make sure Spring Boot is running.";
-        }
+        loadingMessage.textContent = "Could not connect to the backend. Make sure Spring Boot is running.";
         showToast(error.message, true);
     }
 }
@@ -92,9 +76,7 @@ async function createTask(event) {
     try {
         const response = await fetch(`${API_URL}/createTask`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(taskData)
         });
 
@@ -116,20 +98,15 @@ async function createTask(event) {
 
 function renderTasks() {
     const filter = filterSelect.value;
-
-    const filteredTasks = tasks.filter(task => {
-        return filter === "ALL" || task.status === filter;
-    });
+    const filteredTasks = tasks.filter(task => filter === "ALL" || task.status === filter);
 
     tasksList.innerHTML = "";
 
     if (filteredTasks.length === 0) {
         loadingMessage.style.display = "block";
-        loadingMessage.textContent =
-            filter === "ALL"
-                ? "No tasks yet. Create your first task."
-                : "No matching tasks.";
-
+        loadingMessage.textContent = filter === "ALL"
+            ? "No tasks yet. Create your first task."
+            : "No matching tasks.";
         return;
     }
 
@@ -141,8 +118,17 @@ function renderTasks() {
 }
 
 function createTaskCard(task) {
+    const isComplete = task.status === "COMPLETE";
     const card = document.createElement("article");
-    card.className = `task-card ${task.status === "COMPLETE" ? "completed" : ""}`;
+    card.className = `task-card ${isComplete ? "completed" : ""}`;
+
+    const checkButton = document.createElement("button");
+    checkButton.type = "button";
+    checkButton.className = `task-check ${isComplete ? "checked" : ""}`;
+    checkButton.setAttribute("aria-label", isComplete ? `Mark ${task.title} as open` : `Mark ${task.title} as complete`);
+    checkButton.setAttribute("aria-pressed", String(isComplete));
+    checkButton.innerHTML = isComplete ? "✓" : "";
+    checkButton.addEventListener("click", () => toggleTaskStatus(task));
 
     const main = document.createElement("div");
     main.className = "task-main";
@@ -163,11 +149,10 @@ function createTaskCard(task) {
     priorityBadge.textContent = `${capitalize(task.priority)} priority`;
 
     const statusBadge = document.createElement("span");
-    statusBadge.className = "badge badge-status";
-    statusBadge.textContent = task.status === "COMPLETE" ? "Completed" : "Open";
+    statusBadge.className = `badge ${isComplete ? "badge-status" : "badge-open"}`;
+    statusBadge.textContent = isComplete ? "Completed" : "Open";
 
-    meta.appendChild(priorityBadge);
-    meta.appendChild(statusBadge);
+    meta.append(priorityBadge, statusBadge);
 
     if (task.dueDate) {
         const dueDate = document.createElement("span");
@@ -176,9 +161,7 @@ function createTaskCard(task) {
         meta.appendChild(dueDate);
     }
 
-    main.appendChild(title);
-    main.appendChild(description);
-    main.appendChild(meta);
+    main.append(title, description, meta);
 
     const actions = document.createElement("div");
     actions.className = "task-actions";
@@ -195,13 +178,40 @@ function createTaskCard(task) {
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", () => openDeleteModal(task));
 
-    actions.appendChild(editButton);
-    actions.appendChild(deleteButton);
+    actions.append(editButton, deleteButton);
 
-    card.appendChild(main);
-    card.appendChild(actions);
+    card.append(checkButton, main, actions);
 
     return card;
+}
+
+async function toggleTaskStatus(task) {
+    const nextStatus = task.status === "COMPLETE" ? "OPEN" : "COMPLETE";
+
+    try {
+        const response = await fetch(`${API_URL}/${task.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: task.title,
+                description: task.description || null,
+                dueDate: task.dueDate || null,
+                priority: task.priority,
+                status: nextStatus
+            })
+        });
+
+        const result = await readResponse(response);
+
+        if (!response.ok) {
+            throw new Error(result.message || "Could not update task status.");
+        }
+
+        showToast(nextStatus === "COMPLETE" ? "Task marked complete." : "Task marked open.");
+        await loadTasks();
+    } catch (error) {
+        showToast(error.message, true);
+    }
 }
 
 function openEditModal(task) {
@@ -315,10 +325,8 @@ async function deleteTask() {
 
 function updateSummary() {
     const completed = tasks.filter(task => task.status === "COMPLETE").length;
-    const open = tasks.filter(task => task.status === "OPEN").length;
-
     document.getElementById("totalTasks").textContent = tasks.length;
-    document.getElementById("openTasks").textContent = open;
+    document.getElementById("openTasks").textContent = tasks.length - completed;
     document.getElementById("completedTasks").textContent = completed;
 }
 
