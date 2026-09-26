@@ -1,0 +1,233 @@
+:root {
+    /* White background restored */
+    --bg-color: #f4f4f4; 
+    --card-bg: #1e1e1e;
+    --text-main: #ffffff;
+    --text-muted: #888888;
+    --border-color: #333333;
+    
+    --color-blue: #4a90e2;
+    --color-green: #5cb85c;
+    --color-orange: #f0ad4e;
+    --color-red: #d9534f;
+    
+    --btn-bg: #b3ccee;
+    --btn-text: #1e1e1e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color); /* White background */
+    color: var(--text-main);
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Floating Layout --- */
+.app-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px; /* Creates the white space around the card */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-card {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 1400px; 
+    min-height: 80vh; /* Doesn't fill 100% of height, leaves white space top/bottom */
+    padding: 40px 60px;
+    border-radius: 24px; /* Rounded corners */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Soft shadow */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-shrink: 0;
+}
+
+.btn-primary {
+    background-color: var(--btn-bg);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.1s, opacity 0.2s;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.plus-icon {
+    font-size: 1.3rem;
+    font-weight: 400;
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+.nav-arrow {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: color 0.2s;
+}
+
+.nav-arrow:hover {
+    color: var(--btn-bg);
+}
+
+/* --- Grid System --- */
+.habit-grid-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.grid-header, .habit-row {
+    display: grid;
+    grid-template-columns: 250px 150px 1fr; 
+    align-items: center;
+}
+
+.grid-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.days-row {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr); 
+    gap: 12px;
+    text-align: center;
+}
+
+.day-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* --- Habit Rows --- */
+.habit-row {
+    padding: 16px 0;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.habit-row:last-child {
+    border-bottom: none;
+}
+
+.habit-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.drag-handle {
+    color: #444;
+    cursor: grab;
+    font-size: 1.4rem;
+    letter-spacing: -2px;
+}
+
+.color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.habit-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.habit-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-icon {
+    font-size: 1rem;
+}
+
+/* --- Checkboxes (The dots) --- */
+.habit-days-grid {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 12px;
+    justify-items: center;
+}
+
+.day-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background-color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.day-check:hover {
+    opacity: 0.8;
+    transform: scale(1.15);
+}
+
+.day-check.checked.blue { background-color: var(--color-blue); }
+.day-check.checked.green { background-color: var(--color-green); }
+.day-check.checked.orange { background-color: var(--color-orange); }
+.day-check.checked.red { background-color: var(--color-red); }
+
+.day-check.today {
+    border-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+}

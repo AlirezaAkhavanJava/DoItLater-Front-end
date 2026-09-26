@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track My Habit</title>
+    <link rel="stylesheet" href="tcr.css">
+    <!-- Google Fonts for a clean look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Main Card -->
+        <div class="dashboard-card">
+            
+            <!-- Header Section -->
+            <header class="card-header">
+                <button id="add-habit-btn" class="btn-primary">
+                    <span class="plus-icon">+</span> Track My Habit
+                </button>
+                
+                <div class="date-navigation">
+                    <button class="nav-arrow" id="prev-week">‹</button>
+                    <span id="date-range-display">Dec 30 - Jan 13, 2025</span>
+                    <button class="nav-arrow" id="next-week">›</button>
+                </div>
+            </header>
+
+            <!-- Habit Grid Section -->
+            <div class="habit-grid-container">
+                <!-- Days Header (Mon, Tue, etc.) -->
+                <div class="grid-header">
+                    <div class="habit-label-col"></div> <!-- Empty corner -->
+                    <div class="stats-col"></div> <!-- Empty corner -->
+                    <div class="days-row" id="days-header-row">
+                        <!-- Days will be injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Habits List -->
+                <div class="habits-list" id="habits-list">
+                    <!-- Habit rows will be injected by JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
