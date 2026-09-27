@@ -1,18 +1,28 @@
 :root {
-    /* White background restored */
-    --bg-color: #f4f4f4; 
+    /* Backgrounds */
+    --bg-color: #f4f4f4;
     --card-bg: #1e1e1e;
     --text-main: #ffffff;
     --text-muted: #888888;
     --border-color: #333333;
-    
+
+    /* Habit colors */
     --color-blue: #4a90e2;
     --color-green: #5cb85c;
     --color-orange: #f0ad4e;
     --color-red: #d9534f;
-    
+
+    /* Buttons */
     --btn-bg: #b3ccee;
     --btn-text: #1e1e1e;
+    --btn-secondary-bg: #2a2a2a;
+    --btn-secondary-text: #dddddd;
+
+    /* Priority accents */
+    --prio-low: #5cb85c;
+    --prio-medium: #f0ad4e;
+    --prio-high: #e67e22;
+    --prio-critical: #d9534f;
 }
 
 * {
@@ -23,7 +33,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-color); /* White background */
+    background-color: var(--bg-color);
     color: var(--text-main);
     min-height: 100vh;
     width: 100vw;
@@ -36,7 +46,7 @@ body {
 .app-wrapper {
     width: 100%;
     min-height: 100vh;
-    padding: 40px; /* Creates the white space around the card */
+    padding: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,11 +55,11 @@ body {
 .dashboard-card {
     background-color: var(--card-bg);
     width: 100%;
-    max-width: 1400px; 
-    min-height: 80vh; /* Doesn't fill 100% of height, leaves white space top/bottom */
+    max-width: 1400px;
+    min-height: 80vh;
     padding: 40px 60px;
-    border-radius: 24px; /* Rounded corners */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Soft shadow */
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
 }
@@ -63,8 +73,39 @@ body {
     flex-shrink: 0;
 }
 
+/* NEW: header-left container for two buttons */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* NEW: nav link style */
+.btn-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.btn-nav:hover {
+    color: var(--text-main);
+    border-color: var(--btn-bg);
+    background-color: rgba(179, 204, 238, 0.08);
+}
+
 .btn-primary {
     background-color: var(--btn-bg);
+    color: var(--btn-text);
     border: none;
     padding: 12px 24px;
     border-radius: 30px;
@@ -85,6 +126,27 @@ body {
     transform: scale(0.98);
 }
 
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--border-color);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #333333;
+}
+
 .plus-icon {
     font-size: 1.3rem;
     font-weight: 400;
@@ -95,7 +157,7 @@ body {
     align-items: center;
     gap: 20px;
     font-size: 1.1rem;
-    color: #ddd;
+    color: #dddddd;
 }
 
 .nav-arrow {
@@ -119,9 +181,10 @@ body {
     flex-grow: 1;
 }
 
-.grid-header, .habit-row {
+.grid-header,
+.habit-row {
     display: grid;
-    grid-template-columns: 250px 150px 1fr; 
+    grid-template-columns: 250px 150px 1fr;
     align-items: center;
 }
 
@@ -133,7 +196,7 @@ body {
 
 .days-row {
     display: grid;
-    grid-template-columns: repeat(14, 1fr); 
+    grid-template-columns: repeat(7, 1fr);
     gap: 12px;
     text-align: center;
 }
@@ -161,6 +224,32 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+}
+
+/* NEW: text container for name + description */
+.habit-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.habit-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* NEW: description line */
+.habit-description {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .drag-handle {
@@ -174,11 +263,15 @@ body {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
 .habit-name {
     font-size: 1.1rem;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .habit-stats {
@@ -198,10 +291,42 @@ body {
     font-size: 1rem;
 }
 
+/* --- Priority badges --- */
+.priority-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background-color: #2a2a2a;
+    color: var(--text-muted);
+}
+
+.priority-badge.priority-low {
+    background-color: rgba(92, 184, 92, 0.15);
+    color: var(--prio-low);
+}
+
+.priority-badge.priority-medium {
+    background-color: rgba(240, 173, 78, 0.15);
+    color: var(--prio-medium);
+}
+
+.priority-badge.priority-high {
+    background-color: rgba(230, 126, 34, 0.18);
+    color: var(--prio-high);
+}
+
+.priority-badge.priority-critical {
+    background-color: rgba(217, 83, 79, 0.18);
+    color: var(--prio-critical);
+}
+
 /* --- Checkboxes (The dots) --- */
 .habit-days-grid {
     display: grid;
-    grid-template-columns: repeat(14, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 12px;
     justify-items: center;
 }
@@ -222,12 +347,134 @@ body {
     transform: scale(1.15);
 }
 
-.day-check.checked.blue { background-color: var(--color-blue); }
-.day-check.checked.green { background-color: var(--color-green); }
+.day-check.checked.blue   { background-color: var(--color-blue); }
+.day-check.checked.green  { background-color: var(--color-green); }
 .day-check.checked.orange { background-color: var(--color-orange); }
-.day-check.checked.red { background-color: var(--color-red); }
+.day-check.checked.red    { background-color: var(--color-red); }
 
 .day-check.today {
     border-color: #fff;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* NEW: locked cells (past/future) */
+.day-check.locked {
+    cursor: not-allowed;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.day-check.locked:hover {
+    transform: none;
+    opacity: 0.35;
+}
+
+/* --- Empty state --- */
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* --- Modal --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    animation: modal-in 0.18s ease-out;
+}
+
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.modal-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: var(--text-main);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background-color: #2a2a2a;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--btn-bg);
+    box-shadow: 0 0 0 3px rgba(179, 204, 238, 0.15);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #555;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.form-error {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: rgba(217, 83, 79, 0.15);
+    color: #ff8b85;
+    font-size: 0.9rem;
 }
