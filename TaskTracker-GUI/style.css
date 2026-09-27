@@ -366,3 +366,9 @@ input:focus, textarea:focus, select:focus {
     .task-actions { grid-column: 2; margin-top: 2px; }
     .task-action { flex: 1; }
 }
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

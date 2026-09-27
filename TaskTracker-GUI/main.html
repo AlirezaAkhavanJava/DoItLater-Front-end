@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoItLater | Task Manager</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/themes.css">
+    <script src="/themes.js" data-default-theme="90s"></script>
 </head>
 <body>
     <header class="topbar">
@@ -16,9 +18,12 @@
             </div>
         </div>
 
-        <button id="refreshButton" class="icon-button" title="Refresh tasks">
-            ↻
-        </button>
+        <div class="topbar-actions">
+            <button id="refreshButton" class="icon-button" title="Refresh tasks">
+                ↻
+            </button>
+            <button type="button" class="theme-toggle" data-theme-toggle>Theme: 90's</button>
+        </div>
     </header>
 
     <main class="container">

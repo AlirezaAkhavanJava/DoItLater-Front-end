@@ -578,3 +578,12 @@ body {
         font-size: 0.95rem;
     }
 }
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
