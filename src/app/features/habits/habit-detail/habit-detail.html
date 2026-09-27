@@ -1,0 +1,164 @@
+<div class="app-wrapper">
+  <div class="dashboard-card detail-card">
+
+    <header class="card-header">
+      <div class="header-left">
+        <a routerLink="/habits" class="btn-nav">← Back</a>
+      </div>
+
+      <div class="detail-header-actions">
+        <app-theme-toggle />
+        <button class="btn-secondary" (click)="openEdit()">Edit</button>
+        <button class="btn-danger" (click)="openDelete()">Delete</button>
+      </div>
+    </header>
+
+    @if (loading()) {
+      <div class="empty-state">Loading habit…</div>
+    }
+
+    @if (errorMessage()) {
+      <div class="form-error">{{ errorMessage() }}</div>
+    }
+
+    @if (habit(); as h) {
+      @if (!loading()) {
+        <div>
+          <div class="detail-title-block">
+            <div class="detail-title-row">
+              <div class="color-dot color-dot-lg"
+                   [style.background-color]="'var(--color-' + colorDot() + ')'"></div>
+              <h1 class="detail-title">{{ h.name }}</h1>
+              <app-priority-badge [priority]="h.priority" />
+            </div>
+            <p class="detail-description">
+              {{ h.description || 'No description provided.' }}
+            </p>
+            <div class="detail-meta">
+              <span>Created <time>{{ formatDate(h.createdDate) }}</time></span>
+            </div>
+          </div>
+
+          <div class="detail-stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Completed</div>
+              <div class="stat-value">{{ completedCount() }}</div>
+            </div>
+            <div class="stat-card stat-card-failed">
+              <div class="stat-label">Failed</div>
+              <div class="stat-value">{{ failedCount() }}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total Days</div>
+              <div class="stat-value">{{ totalDays() }}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Completion</div>
+              <div class="stat-value">{{ completionRate() }}</div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h2 class="detail-section-title">Full history</h2>
+            <div class="heatmap-wrap">
+              <div class="heatmap-months"
+                   [style.grid-template-columns]="'repeat(' + 52 + ', 13px)'"
+                   style="column-gap: 3px">
+                @for (m of heatmapMonthLabels(); track m.col) {
+                  <span [style.grid-column]="m.col" style="grid-row: 1">{{ m.label }}</span>
+                }
+              </div>
+              <div class="heatmap-body">
+                <div class="heatmap-weekdays">
+                  <span>Mon</span><span>Wed</span><span>Fri</span>
+                </div>
+                <div class="heatmap-grid">
+                  @for (cell of heatmapCells(); track $index) {
+                    <div
+                      class="heatmap-cell"
+                      [class]="cell.hidden ? '' : 'level-' + cell.level"
+                      [style.visibility]="cell.hidden ? 'hidden' : 'visible'"
+                      [attr.data-tooltip]="cell.hidden ? null : cell.tooltip">
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="heatmap-legend">
+                <span>Less</span>
+                <span class="heatmap-cell level-0"></span>
+                <span class="heatmap-cell level-1"></span>
+                <span class="heatmap-cell level-2"></span>
+                <span class="heatmap-cell level-3"></span>
+                <span class="heatmap-cell level-4"></span>
+                <span>More</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+
+  </div>
+</div>
+
+<!-- Edit modal -->
+@if (editOpen()) {
+  <div class="modal-overlay" (click)="closeEdit()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Edit Habit</h2>
+      <form (ngSubmit)="saveEdit()">
+        <div class="form-group">
+          <label for="edit-name">Habit name</label>
+          <input id="edit-name" type="text" required maxlength="100" name="name"
+                 [ngModel]="editModel().name"
+                 (ngModelChange)="editModel.update(v => ({ ...v, name: $event }))" />
+        </div>
+        <div class="form-group">
+          <label for="edit-description">Description</label>
+          <textarea id="edit-description" maxlength="1000" rows="3" name="description"
+                    [ngModel]="editModel().description"
+                    (ngModelChange)="editModel.update(v => ({ ...v, description: $event }))"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-priority">Priority</label>
+          <select id="edit-priority" required name="priority"
+                  [ngModel]="editModel().priority"
+                  (ngModelChange)="editModel.update(v => ({ ...v, priority: $event }))">
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="editSaving()">
+            {{ editSaving() ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+      @if (editError()) { <p class="form-error">{{ editError() }}</p> }
+    </div>
+  </div>
+}
+
+<!-- Delete modal -->
+@if (deleteOpen()) {
+  <div class="modal-overlay" (click)="closeDelete()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Delete habit?</h2>
+      <p class="modal-text">
+        This will permanently delete
+        <strong>"{{ habit()?.name }}"</strong>
+        and all of its history. This action cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeDelete()">Cancel</button>
+        <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="deleteSaving()">
+          {{ deleteSaving() ? 'Deleting…' : 'Delete' }}
+        </button>
+      </div>
+      @if (deleteError()) { <p class="form-error">{{ deleteError() }}</p> }
+    </div>
+  </div>
+}

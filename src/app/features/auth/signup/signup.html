@@ -1,1 +1,108 @@
-<p>signup works!</p>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">✓</div>
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">Start tracking habits and tasks today</p>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="onSubmit($event)" novalidate autocomplete="on">
+      <div class="form-group">
+        <label for="signup-username">Username</label>
+        <input
+          type="text" id="signup-username" name="username"
+          placeholder="e.g. ethan_dev"
+          autocomplete="username" maxlength="30"
+          [(ngModel)]="username" (ngModelChange)="onUsernameInput()"
+        />
+        <p class="field-hint">3–30 characters. Letters, numbers, _, ., -</p>
+      </div>
+
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input
+          type="email" id="signup-email" name="email"
+          placeholder="you@example.com"
+          autocomplete="email" maxlength="255"
+          [(ngModel)]="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="signup-password" name="password"
+            placeholder="••••••••"
+            autocomplete="new-password" maxlength="128"
+            [(ngModel)]="password" (ngModelChange)="onPasswordInput()"
+          />
+          <button type="button" class="password-toggle" (click)="togglePassword()">
+            <span class="eye-icon">{{ showPassword ? '🙈' : '👁' }}</span>
+          </button>
+        </div>
+
+        <div class="strength-meter">
+          <div class="strength-bar">
+            <div
+              class="strength-fill"
+              [style.width.%]="strength().pct"
+              [style.background-color]="
+                strength().cls === 'weak'   ? 'var(--danger)'  :
+                strength().cls === 'fair'   ? 'var(--warning)' :
+                strength().cls === 'good'   ? 'var(--accent)'  :
+                strength().cls === 'strong' ? 'var(--success)' :
+                'var(--danger)'
+              "></div>
+          </div>
+          <p class="strength-text" [ngClass]="strength().cls">{{ strength().label }}</p>
+        </div>
+
+        <ul class="password-rules">
+          <li [class.valid]="ruleState()['length']">At least 8 characters</li>
+          <li [class.valid]="ruleState()['upper']">One uppercase letter</li>
+          <li [class.valid]="ruleState()['lower']">One lowercase letter</li>
+          <li [class.valid]="ruleState()['digit']">One number</li>
+          <li [class.valid]="ruleState()['symbol']">One symbol (!@#$…)</li>
+          <li [class.valid]="ruleState()['nospace']">No spaces</li>
+          <li [class.valid]="ruleState()['noRepeat']">No 3+ repeated chars</li>
+          <li [class.valid]="ruleState()['noCommon']">Not a common password</li>
+        </ul>
+      </div>
+
+      <div class="form-group">
+        <label for="signup-confirm">Confirm password</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showConfirm ? 'text' : 'password'"
+            id="signup-confirm" name="confirm"
+            placeholder="••••••••"
+            autocomplete="new-password" maxlength="128"
+            [(ngModel)]="confirm" (ngModelChange)="onConfirmInput()"
+          />
+          <button type="button" class="password-toggle" (click)="toggleConfirm()">
+            <span class="eye-icon">{{ showConfirm ? '🙈' : '👁' }}</span>
+          </button>
+        </div>
+        <p class="field-hint" [ngClass]="confirmHint().cls">{{ confirmHint().text }}</p>
+      </div>
+
+      <label class="checkbox-label terms-checkbox">
+        <input type="checkbox" name="terms" [(ngModel)]="terms" />
+        <span>I agree to the <a href="#" class="link-accent" rel="noopener">Terms</a> and <a href="#" class="link-accent" rel="noopener">Privacy Policy</a></span>
+      </label>
+
+      <button type="submit" class="btn-primary btn-block" [disabled]="submitting()">
+        {{ submitting() ? 'Please wait…' : 'Create Account' }}
+      </button>
+
+      <p *ngIf="errorMessage()" class="form-error" role="alert">{{ errorMessage() }}</p>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account?
+      <a routerLink="/login" class="link-accent" rel="noopener">Log in</a>
+    </p>
+  </div>
+</div>

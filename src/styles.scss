@@ -1,1 +1,87 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   GLOBAL — fonts + reset + shared theme tokens
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo:wght@400;600;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   THEME TOKENS
+   ============================================================ */
+
+/* ---- 90's theme (default) ---- */
+:root,
+[data-theme='90s'] {
+  --bg-color: #faf7f2;
+  --card-bg: #ffffff;
+  --text-main: #1a1a1a;
+  --text-muted: #7a7a7a;
+  --border-color: #1a1a1a;
+
+  --color-blue: #ff5c39;
+  --color-green: #2fa360;
+  --color-orange: #ff9f1c;
+  --color-red: #d92d20;
+
+  --btn-bg: #ff5c39;
+  --btn-text: #1a1a1a;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-text: #1a1a1a;
+
+  --prio-low: #2fa360;
+  --prio-medium: #ff9f1c;
+  --prio-high: #ff7a3a;
+  --prio-critical: #d92d20;
+
+  --danger: #d92d20;
+
+  --label-col-width: clamp(180px, 22vw, 300px);
+  --stats-col-width: clamp(150px, 14vw, 220px);
+  --day-cell-size: clamp(22px, 2vw, 30px);
+  --day-gap: clamp(6px, 0.8vw, 12px);
+}
+
+/* ---- Hana theme ---- */
+[data-theme='hana'] {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-main: #ffffff;
+  --text-muted: #8a8a8a;
+  --border-color: #333333;
+
+  --color-blue: #4a90e2;
+  --color-green: #5cb85c;
+  --color-orange: #f0ad4e;
+  --color-red: #d9534f;
+
+  --btn-bg: #b3ccee;
+  --btn-text: #1e1e1e;
+  --btn-secondary-bg: #2a2a2a;
+  --btn-secondary-text: #dddddd;
+
+  --prio-low: #5cb85c;
+  --prio-medium: #f0ad4e;
+  --prio-high: #e67e22;
+  --prio-critical: #d9534f;
+
+  --danger: #d9534f;
+
+  --label-col-width: clamp(180px, 22vw, 300px);
+  --stats-col-width: clamp(150px, 14vw, 220px);
+  --day-cell-size: clamp(22px, 2vw, 30px);
+  --day-gap: clamp(6px, 0.8vw, 12px);
+}
