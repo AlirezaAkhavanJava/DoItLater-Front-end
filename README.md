@@ -1,22 +1,59 @@
-# DoItLater — Frontend
+# DoItLaterAngular
 
-A lightweight, dependency-free web client for **DoItLater**, a personal productivity app that combines **habit tracking** and **task management**.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
 
-Built with vanilla HTML, CSS, and JavaScript (ES modules) — no build step, no framework, no bundler. Just open an HTML file and it runs.
+## Development server
 
----
+To start a local development server, run:
 
-## Features
+```bash
+ng serve
+```
 
-### Habit Tracker (`HabitTracjer-GUI/`)
-- **Weekly grid view** — 7-day columns per habit, navigate weeks forward/backward
-- **Today-only check-in** — past and future days are locked; only today is clickable
-- **Per-habit stats** — completed count, failed count, and completion rate
-- **Habit details page** — full profile with a **GitHub-style heatmap** of the last 52 weeks
-- **Edit and delete** habits from the detail page
-- **Priority levels** — Low / Medium / High / Critical, color-coded
-- **Auto color assignment** — each habit is assigned one of four accent colors
-- **Create habits via modal** — name, description, and priority
-- **Responsive layout** — collapses gracefully on tablet and mobile
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Code scaffolding
 
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
