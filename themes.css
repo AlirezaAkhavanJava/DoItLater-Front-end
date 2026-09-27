@@ -497,13 +497,60 @@
 
 [data-theme="90s"] .detail-section-title { color: var(--text-main); }
 
-[data-theme="90s"] .heatmap-cell { background-color: #ece7dc; }
-[data-theme="90s"] .heatmap-cell.level-0 { background-color: #ece7dc; }
+/* ------------------------------------------------------------
+   90's HEATMAP  →  bold cartoon grid
+   - every cell gets a black border so the grid is always visible
+   - cells are slightly bigger with a chunky offset shadow when checked
+   - a warm retro palette that reads on the cream section
+   ------------------------------------------------------------ */
+[data-theme="90s"] .heatmap-grid {
+    gap: 2px;
+}
+
+[data-theme="90s"] .heatmap-body {
+    padding-top: 8px;
+}
+
+/* Base cell + every level. Black border keeps the grid readable
+   even when the fill color is close to the section background. */
+[data-theme="90s"] .heatmap-cell,
+[data-theme="90s"] .heatmap-cell.level-0,
+[data-theme="90s"] .heatmap-cell.level-1,
+[data-theme="90s"] .heatmap-cell.level-2,
+[data-theme="90s"] .heatmap-cell.level-3,
+[data-theme="90s"] .heatmap-cell.level-4 {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+/* Empty / no data — a soft cream so it contrasts with the section
+   (#f3efe8) and with the white default above. */
+[data-theme="90s"] .heatmap-cell,
+[data-theme="90s"] .heatmap-cell.level-0 {
+    background-color: #ffffff;
+}
+
+/* Filled levels — punchy retro palette */
 [data-theme="90s"] .heatmap-cell.level-1 { background-color: #ffd9cc; }
 [data-theme="90s"] .heatmap-cell.level-2 { background-color: #ffb199; }
 [data-theme="90s"] .heatmap-cell.level-3 { background-color: #ff8362; }
-[data-theme="90s"] .heatmap-cell.level-4 { background-color: #ff5c39; }
-[data-theme="90s"] .heatmap-cell:hover { box-shadow: 0 0 0 2px var(--border-color); }
+[data-theme="90s"] .heatmap-cell.level-4 {
+    background-color: #ff5c39;
+    box-shadow: 1px 1px 0 var(--border-color);
+}
+
+[data-theme="90s"] .heatmap-cell:hover {
+    box-shadow: 0 0 0 2px var(--border-color);
+    z-index: 3;
+}
+
+/* Legend swatches inherit the same look */
+[data-theme="90s"] .heatmap-legend .heatmap-cell {
+    border: 1px solid var(--border-color);
+    box-shadow: none !important;
+}
 
 [data-theme="90s"] .heatmap-months,
 [data-theme="90s"] .heatmap-weekdays,
