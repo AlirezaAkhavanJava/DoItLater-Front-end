@@ -48,6 +48,13 @@
  */
 
 /**
+ * @typedef {Object} UpdateHabitRequestDto
+ * @property {string} name
+ * @property {HabitPriority} priority
+ * @property {string | null} [description]
+ */
+
+/**
  * @typedef {Object} ToggleHabitEntryRequestDto
  * @property {string} entryDate
  * @property {boolean} completed
@@ -61,8 +68,8 @@
  * @property {string | null} description
  * @property {HabitColor} color
  * @property {HabitPriority} priority
- * @property {number} streak
- * @property {number} weeklyTotal
+ * @property {number} completedCount
+ * @property {number} failedCount
  * @property {boolean[]} history
  */
 

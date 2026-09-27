@@ -105,6 +105,25 @@ const buildHistory = (days, entries) => {
     return history;
 };
 
+/**
+ * How many days have fully passed since the habit was created.
+ * Today doesn't count as "failed" until it's over.
+ * @param {string} createdIso
+ * @returns {number}
+ */
+const daysElapsedSince = (createdIso) => {
+    if (!createdIso) return 0;
+    const created = new Date(createdIso);
+    created.setHours(0, 0, 0, 0);
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const diffMs = now.getTime() - created.getTime();
+    const diffDays = Math.floor(diffMs / 86_400_000);
+    return Math.max(0, diffDays);
+};
+
 // ============================================================
 //  Render
 // ============================================================
@@ -149,7 +168,11 @@ const renderHabits = () => {
             <div class="color-dot" style="background-color: var(--color-${habit.color})"></div>
             <div class="habit-text">
                 <div class="habit-name-row">
-                    <span class="habit-name">${escapeHtml(habit.name)}</span>
+                    <a class="habit-name habit-name-link"
+                       href="./habit-detail.html?id=${habit.id}"
+                       title="${escapeHtml(habit.name)}">
+                        ${escapeHtml(habit.name)}
+                    </a>
                     <span class="priority-badge priority-${habit.priority.toLowerCase()}">${habit.priority}</span>
                 </div>
                 ${habit.description
@@ -162,8 +185,14 @@ const renderHabits = () => {
         const statsCol = document.createElement('div');
         statsCol.className = 'habit-stats';
         statsCol.innerHTML = `
-            <div class="stat-item"><span class="stat-icon">🏆</span> ${habit.streak}</div>
-            <div class="stat-item" style="color: #f0ad4e"><span class="stat-icon">🔥</span> ${habit.weeklyTotal}</div>
+            <div class="stat-item">
+                <span class="stat-label">Completed</span>
+                <span class="stat-value">${habit.completedCount}</span>
+            </div>
+            <div class="stat-item stat-item-failed">
+                <span class="stat-label">Failed</span>
+                <span class="stat-value">${habit.failedCount}</span>
+            </div>
         `;
 
         // -------- Days grid --------
@@ -217,7 +246,6 @@ async function toggleHabit(habitId, dayIndex, element, color) {
     const iso = currentDays[dayIndex];
     if (!iso) return;
 
-    // Only today is editable (double-check)
     if (iso !== toISODate(new Date())) {
         console.warn('Only today can be toggled');
         return;
@@ -225,11 +253,10 @@ async function toggleHabit(habitId, dayIndex, element, color) {
 
     const next = !habit.history[dayIndex];
 
-    // optimistic update
     habit.history[dayIndex] = next;
     element.classList.toggle('checked', next);
     element.classList.toggle(color, next);
-    habit.weeklyTotal += next ? 1 : -1;
+    habit.completedCount += next ? 1 : -1;
 
     /** @type {import('./types.js').ToggleHabitEntryRequestDto} */
     const payload = { entryDate: iso, completed: next, note: null };
@@ -242,11 +269,10 @@ async function toggleHabit(habitId, dayIndex, element, color) {
         });
         if (!res.ok) throw new Error(`POST entries → ${res.status}`);
     } catch (err) {
-        // revert
         habit.history[dayIndex] = !next;
         element.classList.toggle('checked', !next);
         element.classList.toggle(color, !next);
-        habit.weeklyTotal += next ? -1 : 1;
+        habit.completedCount += next ? -1 : 1;
         console.error('Toggle failed:', err);
     } finally {
         renderHabits();
@@ -271,16 +297,28 @@ async function fetchWeek(startDate) {
         currentDays = grid.days;
         dateRangeDisplay.textContent = grid.dateRangeDisplay;
 
-        habits = grid.habits.map((dto) => ({
-            id: dto.id,
-            name: dto.name,
-            description: dto.description,
-            priority: dto.priority,
-            color: pickColor(dto.id),
-            streak: 0,
-            weeklyTotal: dto.completedCount,
-            history: buildHistory(grid.days, dto.entries),
-        }));
+        habits = grid.habits.map((dto) => {
+            const completedCount = dto.completedCount ?? 0;
+
+            // Days fully elapsed since creation — today doesn't count as failed yet
+            const elapsed = daysElapsedSince(dto.createdDate);
+
+            // Cap to the current view window (7) so it can't exceed what's shown
+            const effectiveTotal = Math.min(DAYS_IN_WEEK, elapsed);
+
+            const failedCount = Math.max(0, effectiveTotal - completedCount);
+
+            return {
+                id: dto.id,
+                name: dto.name,
+                description: dto.description,
+                priority: dto.priority,
+                color: pickColor(dto.id),
+                completedCount,
+                failedCount,
+                history: buildHistory(grid.days, dto.entries),
+            };
+        });
     } catch (err) {
         console.error('Failed to load week:', err);
     } finally {

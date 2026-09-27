@@ -1,0 +1,304 @@
+/* ============================================================
+   Habit detail page
+   ============================================================ */
+
+.detail-card {
+    max-width: 1100px;
+    min-height: auto;
+}
+
+.detail-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- Danger button --- */
+.btn-danger {
+    background-color: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger);
+    color: #fff;
+}
+
+/* --- Title block --- */
+.detail-title-block {
+    margin-bottom: 32px;
+}
+
+.detail-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.color-dot-lg {
+    width: 18px;
+    height: 18px;
+}
+
+.detail-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+}
+
+.detail-description {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 720px;
+    margin-bottom: 14px;
+    white-space: pre-wrap;
+}
+
+.detail-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+}
+
+/* --- Stats cards --- */
+.detail-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: #232323;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-card .stat-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #666;
+}
+
+.stat-card .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.stat-card-failed {
+    border-color: rgba(217, 83, 79, 0.35);
+}
+
+.stat-card-failed .stat-value {
+    color: #e88b8b;
+}
+
+/* --- Section --- */
+.detail-section {
+    margin-top: 8px;
+}
+
+.detail-section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+}
+
+/* --- Heatmap --- */
+.heatmap-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.heatmap-months {
+    display: grid;
+    /* matched to heatmap columns via JS (grid-template-columns set inline) */
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding-left: 34px; /* space for weekday labels */
+    letter-spacing: 0.3px;
+}
+
+.heatmap-months span {
+    /* each month label spans its weeks via grid-column */
+    white-space: nowrap;
+}
+
+.heatmap-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.heatmap-weekdays {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    gap: 3px;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    padding-top: 0;
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.heatmap-weekdays span:nth-child(1) { grid-row: 2; }
+.heatmap-weekdays span:nth-child(2) { grid-row: 4; }
+.heatmap-weekdays span:nth-child(3) { grid-row: 6; }
+
+.heatmap-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 12px);
+    gap: 3px;
+}
+
+.heatmap-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background-color: #2a2a2a;
+    transition: transform 0.12s ease, outline 0.12s ease;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.3);
+    outline: 1px solid #fff;
+    z-index: 2;
+}
+
+/* Level colors (green palette) */
+.heatmap-cell.level-0 { background-color: #1f1f1f; }
+.heatmap-cell.level-1 { background-color: #0e4429; }
+.heatmap-cell.level-2 { background-color: #006d32; }
+.heatmap-cell.level-3 { background-color: #26a641; }
+.heatmap-cell.level-4 { background-color: #39d353; }
+
+/* Legend */
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    justify-content: flex-end;
+}
+
+.heatmap-legend .heatmap-cell {
+    width: 11px;
+    height: 11px;
+}
+
+/* --- Modal text --- */
+.modal-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.modal-text strong {
+    color: var(--text-main);
+}
+
+/* --- Detail page responsive --- */
+.detail-title {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    word-break: break-word;
+}
+
+.detail-description {
+    word-break: break-word;
+}
+
+.detail-stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.stat-card .stat-value {
+    font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+    font-variant-numeric: tabular-nums;
+    word-break: break-word;
+}
+
+/* --- Heatmap responsive --- */
+.heatmap-body {
+    padding-bottom: 10px;
+}
+
+@media (max-width: 700px) {
+    .heatmap-weekdays {
+        display: none;
+    }
+
+    .heatmap-months {
+        padding-left: 0;
+    }
+
+    .heatmap-legend {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-header-actions {
+        gap: 8px;
+    }
+
+    .detail-title-row {
+        gap: 10px;
+    }
+}
+
+.modal-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.modal-text strong {
+    color: var(--text-main);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+.modal {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: min(420px, calc(100vw - 32px));
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    animation: modal-in 0.18s ease-out;
+    overflow-wrap: anywhere;
+}
