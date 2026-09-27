@@ -6,8 +6,7 @@ import './types.js';
 const API_ORIGIN = 'http://localhost:8080';
 const API_BASE = `${API_ORIGIN}/api/v1/habits`;
 
-// How many weeks of history to show in the heatmap
-const HEATMAP_WEEKS = 26;
+const HEATMAP_WEEKS = 52;   // a full year, like GitHub
 
 // ============================================================
 //  Parse habitId from URL
@@ -24,43 +23,41 @@ let habit = null;
 // ============================================================
 //  DOM
 // ============================================================
-const loadingEl = document.getElementById('detail-loading');
-const errorEl = document.getElementById('detail-error');
-const contentEl = document.getElementById('detail-content');
+const loadingEl        = document.getElementById('detail-loading');
+const errorEl          = document.getElementById('detail-error');
+const contentEl        = document.getElementById('detail-content');
 
-const editHabitBtn = document.getElementById('edit-habit-btn');
-const deleteHabitBtn = document.getElementById('delete-habit-btn');
+const editHabitBtn     = document.getElementById('edit-habit-btn');
+const deleteHabitBtn   = document.getElementById('delete-habit-btn');
 
-const colorDotEl = document.getElementById('detail-color-dot');
-const nameEl = document.getElementById('detail-name');
-const priorityEl = document.getElementById('detail-priority-badge');
-const descriptionEl = document.getElementById('detail-description');
-const createdDateEl = document.getElementById('detail-created-date');
+const colorDotEl       = document.getElementById('detail-color-dot');
+const nameEl           = document.getElementById('detail-name');
+const priorityEl       = document.getElementById('detail-priority-badge');
+const descriptionEl    = document.getElementById('detail-description');
+const createdDateEl    = document.getElementById('detail-created-date');
 
-const statCompletedEl = document.getElementById('stat-completed');
-const statFailedEl = document.getElementById('stat-failed');
-const statTotalEl = document.getElementById('stat-total');
-const statRateEl = document.getElementById('stat-rate');
+const statCompletedEl  = document.getElementById('stat-completed');
+const statFailedEl     = document.getElementById('stat-failed');
+const statTotalEl      = document.getElementById('stat-total');
+const statRateEl       = document.getElementById('stat-rate');
 
-const heatmapMonthsEl = document.getElementById('heatmap-months');
-const heatmapGridEl = document.getElementById('heatmap-grid');
+const heatmapMonthsEl  = document.getElementById('heatmap-months');
+const heatmapGridEl    = document.getElementById('heatmap-grid');
 
-// Edit modal
-const editModal = document.getElementById('edit-modal');
-const editForm = document.getElementById('edit-form');
-const editNameInput = document.getElementById('edit-name');
-const editDescInput = document.getElementById('edit-description');
-const editPrioritySel = document.getElementById('edit-priority');
-const cancelEditBtn = document.getElementById('cancel-edit-btn');
-const saveEditBtn = document.getElementById('save-edit-btn');
-const editFormError = document.getElementById('edit-form-error');
+const editModal        = document.getElementById('edit-modal');
+const editForm         = document.getElementById('edit-form');
+const editNameInput    = document.getElementById('edit-name');
+const editDescInput    = document.getElementById('edit-description');
+const editPrioritySel  = document.getElementById('edit-priority');
+const cancelEditBtn    = document.getElementById('cancel-edit-btn');
+const saveEditBtn      = document.getElementById('save-edit-btn');
+const editFormError    = document.getElementById('edit-form-error');
 
-// Delete modal
-const deleteModal = document.getElementById('delete-modal');
-const deleteHabitName = document.getElementById('delete-habit-name');
-const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+const deleteModal      = document.getElementById('delete-modal');
+const deleteHabitName  = document.getElementById('delete-habit-name');
+const cancelDeleteBtn  = document.getElementById('cancel-delete-btn');
 const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-const deleteFormError = document.getElementById('delete-form-error');
+const deleteFormError  = document.getElementById('delete-form-error');
 
 // ============================================================
 //  Helpers
@@ -87,12 +84,6 @@ const toISODate = (d) => {
     return `${y}-${m}-${day}`;
 };
 
-/** @param {string} iso */
-const parseISODate = (iso) => {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d);
-};
-
 /** @param {string | null} isoDateTime */
 const formatDate = (isoDateTime) => {
     if (!isoDateTime) return '—';
@@ -110,7 +101,7 @@ const MONTH_LABELS = [
 ];
 
 // ============================================================
-//  Render: header / stats / description
+//  Render: header / stats
 // ============================================================
 const renderDetail = () => {
     if (!habit) return;
@@ -133,64 +124,53 @@ const renderDetail = () => {
 
     createdDateEl.textContent = formatDate(habit.createdDate);
 
+    // ---- Trust the backend for totalDays / completedCount ----
     const completedCount = habit.completedCount ?? 0;
-    // Days fully elapsed since creation (today doesn't count yet)
-    const created = new Date(habit.createdDate);
-    created.setHours(0, 0, 0, 0);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const elapsed = Math.max(0, Math.floor((now.getTime() - created.getTime()) / 86_400_000));
-
-    const totalDays = elapsed;
-    const failedCount = Math.max(0, totalDays - completedCount);
-    const rate = totalDays === 0 ? 0 : (completedCount * 100 / totalDays);
+    const totalDays      = habit.totalDays ?? 0;
+    const failedCount    = Math.max(0, totalDays - completedCount);
+    const rate           = totalDays === 0 ? 0 : (completedCount * 100 / totalDays);
 
     statCompletedEl.textContent = String(completedCount);
-    statFailedEl.textContent = String(failedCount);
-    statTotalEl.textContent = String(totalDays);
-    statRateEl.textContent = `${rate.toFixed(1)}%`;
+    statFailedEl.textContent    = String(failedCount);
+    statTotalEl.textContent     = String(totalDays);
+    statRateEl.textContent      = `${rate.toFixed(1)}%`;
 };
 
 // ============================================================
 //  Render: heatmap
 // ============================================================
-/**
- * Build a GitHub-style heatmap of completions for the last N weeks.
- * We fill all 7 rows per column; missing days stay level-0.
- */
 const renderHeatmap = () => {
     if (!habit) return;
 
     heatmapGridEl.innerHTML = '';
     heatmapMonthsEl.innerHTML = '';
 
-    // Build a set of completed dates for fast lookup
     const completedDates = new Set(
         (habit.entries ?? [])
             .filter((e) => e.completed)
             .map((e) => e.entryDate)
     );
 
-    // Anchor on today, go back to the Monday of the current week,
-    // then walk back (HEATMAP_WEEKS - 1) more weeks.
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const currentMonday = new Date(today);
-    const dow = (currentMonday.getDay() + 6) % 7; // Mon=0, Sun=6
+    const dow = (currentMonday.getDay() + 6) % 7; // Mon = 0
     currentMonday.setDate(currentMonday.getDate() - dow);
 
     const startMonday = new Date(currentMonday);
     startMonday.setDate(startMonday.getDate() - (HEATMAP_WEEKS - 1) * 7);
 
-    // --- Month labels ---
-    // Track the first column index where each month appears.
-    const monthFirstCol = new Map(); // monthIndex -> columnIndex
+    // For each column, remember which month it belongs to
+    const monthPerCol = [];
 
-    // --- Build cells ---
+    // ---- Build cells ----
     for (let w = 0; w < HEATMAP_WEEKS; w++) {
         const weekStart = new Date(startMonday);
         weekStart.setDate(startMonday.getDate() + w * 7);
+
+        // The "month of this column" = month of the Monday of that week
+        monthPerCol.push(weekStart.getMonth());
 
         for (let d = 0; d < 7; d++) {
             const cellDate = new Date(weekStart);
@@ -207,32 +187,37 @@ const renderHeatmap = () => {
             } else {
                 const level = completedDates.has(iso) ? 4 : 0;
                 cell.classList.add(`level-${level}`);
-                cell.title = `${iso} — ${level > 0 ? 'completed' : 'not completed'}`;
+                cell.dataset.tooltip = `${iso} — ${level > 0 ? 'completed' : 'not completed'}`;
             }
 
             heatmapGridEl.appendChild(cell);
-
-            // Record first occurrence of each month (for the label row)
-            if (d === 0 && !monthFirstCol.has(cellDate.getMonth())) {
-                monthFirstCol.set(cellDate.getMonth(), w);
-            }
         }
     }
 
-    // --- Place month labels as absolutely positioned spans using CSS grid-column ---
-    heatmapMonthsEl.style.gridTemplateColumns = `repeat(${HEATMAP_WEEKS}, 12px)`;
+    // ---- Build month labels with minimum spacing ----
+    heatmapMonthsEl.style.gridTemplateColumns = `repeat(${HEATMAP_WEEKS}, 13px)`;
     heatmapMonthsEl.style.columnGap = '3px';
 
-    // Sort months by column index, then place each label at that column
-    const sortedMonths = [...monthFirstCol.entries()]
-        .sort((a, b) => a[1] - b[1]);
+    const MIN_COL_GAP = 3;   // a month label needs ~3 columns of width
+    let lastLabelCol = -Infinity;
 
-    for (const [monthIdx, colIdx] of sortedMonths) {
+    for (let w = 0; w < HEATMAP_WEEKS; w++) {
+        const month = monthPerCol[w];
+        const prevMonth = w > 0 ? monthPerCol[w - 1] : null;
+
+        // Only emit a label on the first column of a new month
+        if (month === prevMonth) continue;
+
+        // Skip if it would overlap the previous label
+        if (w - lastLabelCol < MIN_COL_GAP) continue;
+
         const span = document.createElement('span');
-        span.textContent = MONTH_LABELS[monthIdx];
-        span.style.gridColumn = String(colIdx + 1);
+        span.textContent = MONTH_LABELS[month];
+        span.style.gridColumn = String(w + 1);
         span.style.gridRow = '1';
         heatmapMonthsEl.appendChild(span);
+
+        lastLabelCol = w;
     }
 };
 
@@ -333,8 +318,10 @@ function openDeleteModal() {
     const displayName = habit.name.length > 60
         ? habit.name.slice(0, 60).trimEnd() + '…'
         : habit.name;
+
     deleteHabitName.textContent = `"${displayName}"`;
-    deleteHabitName.title = habit.name; // full name on hover
+    deleteHabitName.title = habit.name;
+
     deleteFormError.hidden = true;
     deleteFormError.textContent = '';
 
@@ -385,8 +372,6 @@ editForm.addEventListener('submit', async (e) => {
 
     try {
         const updated = await updateHabit({ name, priority, description });
-
-        // Update local state with the fresh DTO
         habit = updated;
         renderDetail();
         closeEditModal();

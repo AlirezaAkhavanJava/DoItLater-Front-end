@@ -47,7 +47,6 @@ const formError             = document.getElementById('habit-form-error');
 // ============================================================
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-/** @param {Date} d @returns {string} */
 const toISODate = (d) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -55,13 +54,11 @@ const toISODate = (d) => {
     return `${y}-${m}-${day}`;
 };
 
-/** @param {string} iso @returns {Date} */
 const parseISODate = (iso) => {
     const [y, m, d] = iso.split('-').map(Number);
     return new Date(y, m - 1, d);
 };
 
-/** @param {Date} date @returns {boolean} */
 const isDateToday = (date) => {
     const now = new Date();
     return (
@@ -71,7 +68,6 @@ const isDateToday = (date) => {
     );
 };
 
-/** @param {string} s @returns {string} */
 const escapeHtml = (s) =>
     String(s)
         .replaceAll('&', '&amp;')
@@ -80,7 +76,6 @@ const escapeHtml = (s) =>
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#39;');
 
-/** @param {string | null} s @param {number} n @returns {string} */
 const truncate = (s, n) => {
     if (!s) return '';
     return s.length > n ? s.slice(0, n).trimEnd() + '…' : s;
@@ -88,14 +83,8 @@ const truncate = (s, n) => {
 
 const COLOR_CYCLE = ['blue', 'green', 'orange', 'red'];
 
-/** @param {number} id @returns {import('./types.js').HabitColor} */
 const pickColor = (id) => COLOR_CYCLE[id % COLOR_CYCLE.length];
 
-/**
- * @param {string[]} days
- * @param {{ entryDate: string; completed: boolean }[]} entries
- * @returns {boolean[]}
- */
 const buildHistory = (days, entries) => {
     const history = new Array(days.length).fill(false);
     for (const e of entries) {
@@ -105,29 +94,9 @@ const buildHistory = (days, entries) => {
     return history;
 };
 
-/**
- * How many days have fully passed since the habit was created.
- * Today doesn't count as "failed" until it's over.
- * @param {string} createdIso
- * @returns {number}
- */
-const daysElapsedSince = (createdIso) => {
-    if (!createdIso) return 0;
-    const created = new Date(createdIso);
-    created.setHours(0, 0, 0, 0);
-
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
-    const diffMs = now.getTime() - created.getTime();
-    const diffDays = Math.floor(diffMs / 86_400_000);
-    return Math.max(0, diffDays);
-};
-
 // ============================================================
 //  Render
 // ============================================================
-/** @param {string[]} days */
 const renderHeader = (days) => {
     daysHeaderRow.innerHTML = '';
 
@@ -160,7 +129,6 @@ const renderHabits = () => {
         const row = document.createElement('div');
         row.className = 'habit-row';
 
-        // -------- Info column --------
         const infoCol = document.createElement('div');
         infoCol.className = 'habit-info';
         infoCol.innerHTML = `
@@ -181,7 +149,6 @@ const renderHabits = () => {
             </div>
         `;
 
-        // -------- Stats column --------
         const statsCol = document.createElement('div');
         statsCol.className = 'habit-stats';
         statsCol.innerHTML = `
@@ -195,7 +162,6 @@ const renderHabits = () => {
             </div>
         `;
 
-        // -------- Days grid --------
         const daysGrid = document.createElement('div');
         daysGrid.className = 'habit-days-grid';
 
@@ -233,12 +199,6 @@ const renderHabits = () => {
 // ============================================================
 //  Interaction
 // ============================================================
-/**
- * @param {number} habitId
- * @param {number} dayIndex
- * @param {HTMLElement} element
- * @param {import('./types.js').HabitColor} color
- */
 async function toggleHabit(habitId, dayIndex, element, color) {
     const habit = habits.find((h) => h.id === habitId);
     if (!habit) return;
@@ -256,9 +216,7 @@ async function toggleHabit(habitId, dayIndex, element, color) {
     habit.history[dayIndex] = next;
     element.classList.toggle('checked', next);
     element.classList.toggle(color, next);
-    habit.completedCount += next ? 1 : -1;
 
-    /** @type {import('./types.js').ToggleHabitEntryRequestDto} */
     const payload = { entryDate: iso, completed: next, note: null };
 
     try {
@@ -268,13 +226,14 @@ async function toggleHabit(habitId, dayIndex, element, color) {
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(`POST entries → ${res.status}`);
+
+        // Refresh from the server so counts and totals stay in sync
+        await fetchWeek(currentStartDate);
     } catch (err) {
         habit.history[dayIndex] = !next;
         element.classList.toggle('checked', !next);
         element.classList.toggle(color, !next);
-        habit.completedCount += next ? -1 : 1;
         console.error('Toggle failed:', err);
-    } finally {
         renderHabits();
     }
 }
@@ -282,7 +241,6 @@ async function toggleHabit(habitId, dayIndex, element, color) {
 // ============================================================
 //  API
 // ============================================================
-/** @param {Date} startDate */
 async function fetchWeek(startDate) {
     const iso = toISODate(startDate);
     const url = `${API_BASE}/week?startDate=${iso}`;
@@ -291,7 +249,6 @@ async function fetchWeek(startDate) {
         const res = await fetch(url, { headers: { Accept: 'application/json' } });
         if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
 
-        /** @type {import('./types.js').WeekGridDto} */
         const grid = await res.json();
 
         currentDays = grid.days;
@@ -299,14 +256,8 @@ async function fetchWeek(startDate) {
 
         habits = grid.habits.map((dto) => {
             const completedCount = dto.completedCount ?? 0;
-
-            // Days fully elapsed since creation — today doesn't count as failed yet
-            const elapsed = daysElapsedSince(dto.createdDate);
-
-            // Cap to the current view window (7) so it can't exceed what's shown
-            const effectiveTotal = Math.min(DAYS_IN_WEEK, elapsed);
-
-            const failedCount = Math.max(0, effectiveTotal - completedCount);
+            const totalDays      = dto.totalDays ?? 0;
+            const failedCount    = Math.max(0, totalDays - completedCount);
 
             return {
                 id: dto.id,
@@ -327,7 +278,6 @@ async function fetchWeek(startDate) {
     }
 }
 
-/** @param {import('./types.js').CreateHabitRequestDto} payload */
 async function createHabit(payload) {
     const res = await fetch(CREATE_ENDPOINT, {
         method: 'POST',
@@ -358,7 +308,6 @@ function closeModal() {
     modal.hidden = true;
 }
 
-/** @param {SubmitEvent} e */
 async function onSubmitHabit(e) {
     e.preventDefault();
 
