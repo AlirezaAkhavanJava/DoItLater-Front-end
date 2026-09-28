@@ -7,10 +7,1001 @@
     <title>DoItLater - Task & Habit Tracker</title>
     
     <!-- Stylesheets -->
+    <link rel="stylesheet" href="themes.css">
     <link rel="stylesheet" href="assets/css/themes.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    
+    <!-- Inline CSS for Index.html -->
+    <style>
+        /* ============================================================
+           Index.html - Landing Page Styles
+           Using 90's and Hana theme patterns from themes.css
+           ============================================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* ============================================================
+           Navigation Bar - following theme patterns
+           ============================================================ */
+        .navbar {
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        [data-theme="hana"] .navbar {
+            background: var(--panel);
+            border-bottom: 1px solid var(--line);
+        }
+
+        [data-theme="90s"] .navbar {
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        [data-theme="hana"] .nav-logo a {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .nav-logo a {
+            color: var(--text-main);
+        }
+
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        [data-theme="hana"] .logo-icon {
+            background: var(--blue);
+            color: #ffffff;
+            border: 1px solid var(--line);
+        }
+
+        [data-theme="90s"] .logo-icon {
+            background: var(--text-main);
+            color: #ffffff;
+            border: 2px solid var(--border-color);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        [data-theme="hana"] .nav-link {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .nav-link {
+            color: var(--text-main);
+        }
+
+        [data-theme="hana"] .nav-link:hover {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .nav-link:hover {
+            text-decoration: underline;
+            color: var(--color-blue);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        [data-theme="hana"] .bar {
+            background: var(--ink);
+        }
+
+        [data-theme="90s"] .bar {
+            background: var(--text-main);
+        }
+
+        /* ============================================================
+           Hero Section
+           ============================================================ */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        [data-theme="hana"] .hero-content h1 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .hero-content h1 {
+            color: var(--text-main);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        [data-theme="hana"] .hero-subtitle {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .hero-subtitle {
+            color: var(--text-muted);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+        }
+
+        [data-theme="hana"] .btn-primary {
+            background: var(--blue);
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            box-shadow: none;
+        }
+
+        [data-theme="hana"] .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        [data-theme="90s"] .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+            box-shadow: 3px 3px 0 var(--border-color);
+        }
+
+        [data-theme="90s"] .btn-primary:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 var(--border-color);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2rem;
+        }
+
+        [data-theme="hana"] .btn-secondary {
+            background: var(--panel);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            box-shadow: none;
+        }
+
+        [data-theme="hana"] .btn-secondary:hover {
+            background: var(--panel-light);
+        }
+
+        [data-theme="90s"] .btn-secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+        }
+
+        [data-theme="90s"] .btn-secondary:hover {
+            background: var(--text-main);
+            color: #ffffff;
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-card {
+            width: 100%;
+            max-width: 300px;
+            padding: 1.5rem;
+        }
+
+        [data-theme="hana"] .hero-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: none;
+        }
+
+        [data-theme="90s"] .hero-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+            box-shadow: 8px 8px 0 var(--border-color);
+        }
+
+        .card-header {
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="hana"] .card-header {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .card-header {
+            color: var(--text-main);
+        }
+
+        .card-item {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        [data-theme="hana"] .card-item {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .card-item {
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           Features Section
+           ============================================================ */
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        [data-theme="hana"] .section-header h2 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .section-header h2 {
+            color: var(--text-main);
+        }
+
+        .section-header p {
+            font-size: 1.05rem;
+        }
+
+        [data-theme="hana"] .section-header p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .section-header p {
+            color: var(--text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="hana"] .feature-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            box-shadow: none;
+        }
+
+        [data-theme="hana"] .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            border-color: var(--blue);
+        }
+
+        [data-theme="90s"] .feature-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        [data-theme="90s"] .feature-card:hover {
+            box-shadow: 4px 4px 0 var(--border-color);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        [data-theme="hana"] .feature-card h3 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .feature-card h3 {
+            color: var(--text-main);
+        }
+
+        .feature-card p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        [data-theme="hana"] .feature-card p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .feature-card p {
+            color: var(--text-muted);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            font-weight: bold;
+        }
+
+        [data-theme="hana"] .feature-list li {
+            color: var(--muted);
+        }
+
+        [data-theme="hana"] .feature-list li:before {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .feature-list li {
+            color: var(--text-muted);
+        }
+
+        [data-theme="90s"] .feature-list li:before {
+            color: var(--color-blue);
+        }
+
+        .feature-link {
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        [data-theme="hana"] .feature-link {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .feature-link {
+            color: var(--color-blue);
+        }
+
+        /* ============================================================
+           How It Works Section
+           ============================================================ */
+        .how-it-works {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .step-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+        }
+
+        [data-theme="hana"] .step-number {
+            background: var(--blue);
+            color: #ffffff;
+        }
+
+        [data-theme="90s"] .step-number {
+            background: var(--btn-bg);
+            color: #ffffff;
+            border: 2px solid var(--border-color);
+        }
+
+        .step h3 {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        [data-theme="hana"] .step h3 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .step h3 {
+            color: var(--text-main);
+        }
+
+        .step p {
+            font-size: 0.95rem;
+        }
+
+        [data-theme="hana"] .step p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .step p {
+            color: var(--text-muted);
+        }
+
+        .step-arrow {
+            display: none;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        [data-theme="hana"] .step-arrow {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .step-arrow {
+            color: var(--text-main);
+        }
+
+        @media (min-width: 800px) {
+            .step-arrow {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        /* ============================================================
+           Themes Showcase Section
+           ============================================================ */
+        .themes-showcase {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-preview {
+            text-align: center;
+        }
+
+        .theme-box {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="hana"] .theme-box {
+            border: 1px solid var(--line);
+        }
+
+        [data-theme="90s"] .theme-box {
+            border: 2px solid var(--border-color);
+        }
+
+        .theme-default { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .theme-purple { background: linear-gradient(135deg, #a78bfa, #c4b5fd); }
+        .theme-blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .theme-green { background: linear-gradient(135deg, #10b981, #34d399); }
+        .theme-orange { background: linear-gradient(135deg, #f97316, #fb923c); }
+
+        .theme-preview p {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        [data-theme="hana"] .theme-preview p {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .theme-preview p {
+            color: var(--text-main);
+        }
+
+        .theme-mode-toggle {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 1rem 2rem;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        [data-theme="hana"] .mode-btn {
+            background: var(--panel);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+        }
+
+        [data-theme="hana"] .mode-btn:hover {
+            background: var(--panel-light);
+        }
+
+        [data-theme="90s"] .mode-btn {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+        }
+
+        [data-theme="90s"] .mode-btn:hover {
+            box-shadow: 3px 3px 0 var(--border-color);
+        }
+
+        /* ============================================================
+           About Section
+           ============================================================ */
+        .about {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+
+        .about-text h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        [data-theme="hana"] .about-text h3 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .about-text h3 {
+            color: var(--text-main);
+        }
+
+        .about-text p {
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="hana"] .about-text p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .about-text p {
+            color: var(--text-muted);
+        }
+
+        .values-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .values-list li {
+            padding: 0.5rem 0;
+        }
+
+        [data-theme="hana"] .values-list li {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .values-list li {
+            color: var(--text-muted);
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        [data-theme="hana"] .stat {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+        }
+
+        [data-theme="90s"] .stat {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        [data-theme="hana"] .stat-number {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .stat-number {
+            color: var(--color-blue);
+        }
+
+        .stat p {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        [data-theme="hana"] .stat p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .stat p {
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           CTA Section
+           ============================================================ */
+        .cta {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="hana"] .cta-content h2 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .cta-content h2 {
+            color: var(--text-main);
+        }
+
+        .cta-content p {
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        [data-theme="hana"] .cta-content p {
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .cta-content p {
+            color: var(--text-muted);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 1.25rem 3rem;
+        }
+
+        /* ============================================================
+           Footer
+           ============================================================ */
+        .footer {
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        [data-theme="hana"] .footer {
+            background: var(--panel);
+            border-top: 1px solid var(--line);
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .footer {
+            background: #f3efe8;
+            border-top: 2px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="hana"] .footer-section h4 {
+            color: var(--ink);
+        }
+
+        [data-theme="90s"] .footer-section h4 {
+            color: var(--text-main);
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            display: block;
+            padding: 0.3rem 0;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        [data-theme="hana"] .footer-section a {
+            color: var(--muted);
+        }
+
+        [data-theme="hana"] .footer-section a:hover {
+            color: var(--blue);
+        }
+
+        [data-theme="90s"] .footer-section a {
+            color: var(--text-muted);
+        }
+
+        [data-theme="90s"] .footer-section a:hover {
+            color: var(--color-blue);
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid;
+        }
+
+        [data-theme="hana"] .footer-bottom {
+            border-top-color: var(--line);
+            color: var(--muted);
+        }
+
+        [data-theme="90s"] .footer-bottom {
+            border-top-color: var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           Responsive Design
+           ============================================================ */
+        @media (max-width: 768px) {
+            .nav-menu {
+                gap: 1rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 2rem 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                gap: 1rem;
+            }
+
+            .btn, .btn-primary, .btn-secondary, .btn-large {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.8rem;
+            }
+
+            .features {
+                padding: 2rem 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-container {
+                flex-direction: column;
+            }
+
+            .theme-options {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn, .btn-primary, .btn-secondary, .btn-large {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                font-size: 0.75rem;
+            }
+
+            .nav-menu {
+                position: absolute;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--panel);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+        }
+    </style>
 </head>
-<body>
+<body data-theme="90s">
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
@@ -32,7 +1023,7 @@
                     <a href="#contact" class="nav-link">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link theme-toggle" id="themeToggle">🌙</a>
+                    <button type="button" class="theme-toggle" data-theme-toggle></button>
                 </li>
             </ul>
             
@@ -106,12 +1097,12 @@
             <div class="feature-card">
                 <div class="feature-icon">🎨</div>
                 <h3>Personalized Themes</h3>
-                <p>Customize your experience with multiple theme options. Choose from light or dark mode, and select your favorite color palette.</p>
+                <p>Customize your experience with multiple theme options. Choose between our modern 90's and sleek Hana designs.</p>
                 <ul class="feature-list">
-                    <li>Light & Dark themes</li>
-                    <li>5 color themes</li>
+                    <li>90's retro theme</li>
+                    <li>Hana modern theme</li>
                     <li>Auto-saved preferences</li>
-                    <li>Reduced eye strain</li>
+                    <li>Consistent experience</li>
                 </ul>
                 <a href="#" class="feature-link">Customize Now →</a>
             </div>
@@ -237,8 +1228,7 @@
         </div>
 
         <div class="theme-mode-toggle">
-            <button class="mode-btn light-mode">☀️ Light Mode</button>
-            <button class="mode-btn dark-mode">🌙 Dark Mode</button>
+            <button class="mode-btn light-mode" data-theme-toggle>Switch Theme</button>
         </div>
     </section>
 
@@ -272,12 +1262,8 @@
                     <p>Powerful Tools</p>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">5</div>
-                    <p>Color Themes</p>
-                </div>
-                <div class="stat">
                     <div class="stat-number">2</div>
-                    <p>Mode Options</p>
+                    <p>Beautiful Themes</p>
                 </div>
                 <div class="stat">
                     <div class="stat-number">∞</div>
@@ -291,7 +1277,7 @@
     <section class="cta">
         <div class="cta-content">
             <h2>Ready to Take Control of Your Time?</h2>
-            <p>Join thousands of users who are already managing their tasks and building better habits with DoItLater.</p>
+            <p>Join users who are already managing their tasks and building better habits with DoItLater.</p>
             
             <div class="cta-buttons">
                 <a href="pages/task-tracker.html" class="btn btn-large btn-primary">Start Task Tracking</a>
@@ -345,9 +1331,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="themes.js"></script>
-    <script src="assets/js/themes.js"></script>
-    <script src="configurations/app.js"></script>
+    <script src="themes.js" data-default-theme="90s"></script>
     <script>
         // Mobile menu toggle
         const hamburger = document.querySelector('.hamburger');
@@ -383,23 +1367,6 @@
                 }
             });
         });
-
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.body.classList.toggle('dark-theme');
-                themeToggle.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
-                localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-            });
-
-            // Load saved theme preference
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.textContent = '☀️';
-            }
-        }
     </script>
 </body>
 </html>
