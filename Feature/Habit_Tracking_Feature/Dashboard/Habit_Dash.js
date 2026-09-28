@@ -1,4 +1,4 @@
-import './types.js';
+import '../types.js';
 
 // ============================================================
 //  Config
@@ -17,7 +17,7 @@ today.setHours(0, 0, 0, 0);
 let currentStartDate = new Date(today);
 currentStartDate.setDate(currentStartDate.getDate() - (DAYS_IN_WEEK - 1));
 
-/** @type {import('./types.js').Habit[]} */
+/** @type {import('../types.js').Habit[]} */
 let habits = [];
 
 /** @type {string[]} */

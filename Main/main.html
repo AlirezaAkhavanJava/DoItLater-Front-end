@@ -26,13 +26,14 @@
         };
     </script>
 
-    <!-- Theme system (existing) -->
-    <link rel="stylesheet" href="themes.css">
-    <!-- Landing page styles -->
-    <link rel="stylesheet" href="assets/css/index.css">
+    <!-- Theme system (global) -->
+    <link rel="stylesheet" href="../Global/Themes/Css/themes.css">
+
+    <!-- Landing page styles (local)-->
+    <link rel="stylesheet" href="main.css">
 
     <!-- Apply saved theme before paint -->
-    <script src="themes.js" data-default-theme="hana"></script>
+    <script src="../Global/Themes/Js/themes.js" data-default-theme="hana"></script>
 </head>
 
 <body>
@@ -71,14 +72,18 @@
 
             <!-- CTAs -->
             <div class="cta-row">
-                <a href="Features/TaskTracker-GUI/main.html" class="cta cta-primary" data-key="1">
+
+                <a href="../Feature/Task_Tracking_Feature/task-tracker.html" class="cta cta-primary" data-key="1">
                     <span>Tasks</span>
                     <kbd class="key-hint">1</kbd>
                 </a>
-                <a href="Features/HabitTracjer-GUI/tcr.html" class="cta cta-secondary" data-key="2">
+
+
+                <a href="../Feature/Habit_Tracking_Feature/Dashboard/Habit_Dash.html" class="cta cta-secondary" data-key="2">
                     <span>Habits</span>
                     <kbd class="key-hint">2</kbd>
                 </a>
+
             </div>
 
         </section>
@@ -94,7 +99,7 @@
 
     </main>
 
-    <script src="assets/js/index.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

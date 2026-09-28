@@ -1,4 +1,4 @@
-import './types.js';
+import '../types.js';
 
 // ============================================================
 //  Config
@@ -17,7 +17,7 @@ const habitId = Number(params.get('id'));
 // ============================================================
 //  State
 // ============================================================
-/** @type {import('./types.js').HabitDto | null} */
+/** @type {import('../types.js').HabitDto | null} */
 let habit = null;
 
 // ============================================================
@@ -243,7 +243,7 @@ async function fetchHabit() {
             throw new Error(`GET habit → ${res.status}`);
         }
 
-        /** @type {import('./types.js').HabitDto} */
+        /** @type {import('../types.js').HabitDto} */
         habit = await res.json();
 
         loadingEl.hidden = true;
