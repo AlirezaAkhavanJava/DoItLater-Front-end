@@ -9,7 +9,7 @@
 
   <div class="topbar-actions">
     <button class="icon-button" title="Refresh tasks" (click)="loadTasks()">↻</button>
-    <app-theme-toggle />
+    <app-theme-toggle></app-theme-toggle>
   </div>
 </header>
 
@@ -20,21 +20,24 @@
       <h2>What needs to be done?</h2>
       <p class="hero-text">Create, manage, and complete your tasks with ease.</p>
     </div>
-    <div class="date-box"><span>{{ todayLabel() }}</span></div>
+
+    <div class="date-box">
+      <span>{{ todayLabel }}</span>
+    </div>
   </section>
 
   <section class="summary-grid">
     <div class="summary-card">
       <span class="summary-label">Total tasks</span>
-      <strong>{{ totalTasks() }}</strong>
+      <strong>{{ totalCount }}</strong>
     </div>
     <div class="summary-card">
       <span class="summary-label">Open tasks</span>
-      <strong>{{ openTasks() }}</strong>
+      <strong>{{ openCount }}</strong>
     </div>
     <div class="summary-card">
       <span class="summary-label">Completed</span>
-      <strong>{{ completedTasks() }}</strong>
+      <strong>{{ completedCount }}</strong>
     </div>
   </section>
 
@@ -47,30 +50,23 @@
         </div>
       </div>
 
-      <form (ngSubmit)="createTask($event)">
+      <form (ngSubmit)="createTask()">
         <label for="title">Task title</label>
-        <input id="title" type="text" placeholder="e.g. Finish project documentation"
-               minlength="2" maxlength="255" required
-               [ngModel]="newTask().title"
-               (ngModelChange)="newTask.update(v => ({ ...v, title: $event }))" name="title" />
+        <input type="text" id="title" name="title" placeholder="e.g. Finish project documentation" minlength="2"
+          maxlength="255" required [(ngModel)]="formTitle">
 
         <label for="description">Description</label>
-        <textarea id="description" placeholder="Add some details..." maxlength="1050" rows="5"
-                  [ngModel]="newTask().description"
-                  (ngModelChange)="newTask.update(v => ({ ...v, description: $event }))" name="description"></textarea>
+        <textarea id="description" name="description" placeholder="Add some details..." maxlength="1050" rows="5"
+          [(ngModel)]="formDescription"></textarea>
 
         <div class="form-row">
           <div>
             <label for="dueDate">Due date</label>
-            <input id="dueDate" type="date"
-                   [ngModel]="newTask().dueDate"
-                   (ngModelChange)="newTask.update(v => ({ ...v, dueDate: $event }))" name="dueDate" />
+            <input type="date" id="dueDate" name="dueDate" [(ngModel)]="formDueDate">
           </div>
           <div>
             <label for="priority">Priority</label>
-            <select id="priority" required name="priority"
-                    [ngModel]="newTask().priority"
-                    (ngModelChange)="newTask.update(v => ({ ...v, priority: $event }))">
+            <select id="priority" name="priority" required [(ngModel)]="formPriority">
               <option value="HIGH">High</option>
               <option value="MEDIUM">Medium</option>
               <option value="LOW">Low</option>
@@ -82,7 +78,7 @@
           <button type="submit" class="primary-button">Add task</button>
         </div>
 
-        @if (formMessage()) { <p class="form-message">{{ formMessage() }}</p> }
+        <p class="form-message">{{ formMessage }}</p>
       </form>
     </div>
 
@@ -93,142 +89,121 @@
           <h3>Task list</h3>
         </div>
 
-        <select class="filter-select"
-                [ngModel]="filter()"
-                (ngModelChange)="filter.set($event)">
+        <select class="filter-select" [(ngModel)]="filter">
           <option value="ALL">All tasks</option>
           <option value="OPEN">Open</option>
           <option value="COMPLETE">Completed</option>
         </select>
       </div>
 
-      @if (loading()) {
-        <div class="empty-state">Loading tasks...</div>
-      } @else if (loadError()) {
-        <div class="empty-state">{{ loadError() }}</div>
-      } @else if (filteredTasks().length === 0) {
-        <div class="empty-state">
-          {{ filter() === 'ALL' ? 'No tasks yet. Create your first task.' : 'No matching tasks.' }}
+      <div *ngIf="loading" class="empty-state">Loading tasks...</div>
+      <div *ngIf="!loading && loadError" class="empty-state">{{ loadError }}</div>
+
+      <div *ngIf="!loading && !loadError" class="tasks-list">
+
+        <div *ngIf="filteredTasks.length === 0" class="empty-state">
+          {{ filter === 'ALL' ? 'No tasks yet. Create your first task.' : 'No matching tasks.' }}
         </div>
-      } @else {
-        <div class="tasks-list">
-          @for (task of filteredTasks(); track task.id) {
-            <article class="task-card" [class.completed]="task.status === 'COMPLETE'">
-              <button class="task-check" type="button"
-                      [class.checked]="task.status === 'COMPLETE'"
-                      (click)="toggleStatus(task)">
-                {{ task.status === 'COMPLETE' ? '✓' : '' }}
-              </button>
 
-              <div class="task-main">
-                <h4 class="task-title">{{ task.title }}</h4>
-                <p class="task-description">{{ task.description || 'No description provided.' }}</p>
+        <article *ngFor="let task of filteredTasks" class="task-card" [class.completed]="task.status === 'COMPLETE'">
+          <button type="button" class="task-check" [class.checked]="task.status === 'COMPLETE'"
+            [attr.aria-label]="task.status === 'COMPLETE' ? ('Mark ' + task.title + ' as open') : ('Mark ' + task.title + ' as complete')"
+            [attr.aria-pressed]="task.status === 'COMPLETE'" (click)="toggleStatus(task)">{{ task.status === 'COMPLETE'
+            ? '✓' : '' }}</button>
 
-                <div class="task-meta">
-                  <span class="badge" [ngClass]="'badge-' + task.priority.toLowerCase()">
-                    {{ capitalize(task.priority) }} priority
-                  </span>
-                  <span class="badge" [ngClass]="task.status === 'COMPLETE' ? 'badge-status' : 'badge-open'">
-                    {{ task.status === 'COMPLETE' ? 'Completed' : 'Open' }}
-                  </span>
-                  @if (task.dueDate) {
-                    <span class="due-date">Due {{ formatDate(task.dueDate) }}</span>
-                  }
-                </div>
-              </div>
+          <div class="task-main">
+            <h4 class="task-title">{{ task.title }}</h4>
+            <p class="task-description">{{ task.description || 'No description provided.' }}</p>
 
-              <div class="task-actions">
-                <button type="button" class="task-action" (click)="openEdit(task)">Edit</button>
-                <button type="button" class="task-action delete" (click)="openDelete(task)">Delete</button>
-              </div>
-            </article>
-          }
-        </div>
-      }
+            <div class="task-meta">
+              <span class="badge" [class]="'badge badge-' + task.priority.toLowerCase()">
+                {{ capitalize(task.priority) }} priority
+              </span>
+              <span class="badge" [class]="task.status === 'COMPLETE' ? 'badge badge-status' : 'badge badge-open'">
+                {{ task.status === 'COMPLETE' ? 'Completed' : 'Open' }}
+              </span>
+              <span class="due-date" *ngIf="task.dueDate">Due {{ formatDate(task.dueDate) }}</span>
+            </div>
+          </div>
+
+          <div class="task-actions">
+            <button type="button" class="task-action" (click)="openEdit(task)">Edit</button>
+            <button type="button" class="task-action delete" (click)="openDelete(task)">Delete</button>
+          </div>
+        </article>
+
+      </div>
     </div>
   </section>
 </main>
 
-<!-- Edit Modal -->
-@if (editOpen()) {
-  <div class="modal" (click)="closeEdit()">
-    <div class="modal-backdrop"></div>
-    <section class="modal-panel" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <div><p class="eyebrow">TASK EDITOR</p><h3>Edit task</h3></div>
-        <button class="modal-close" type="button" (click)="closeEdit()">×</button>
+<!-- Edit modal -->
+<div class="modal" [class.hidden]="!editOpen">
+  <div class="modal-backdrop" (click)="closeEdit()"></div>
+
+  <section class="modal-panel">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">TASK EDITOR</p>
+        <h3>Edit task</h3>
+      </div>
+      <button class="modal-close" type="button" (click)="closeEdit()">×</button>
+    </div>
+
+    <form (ngSubmit)="saveEdit()">
+      <label for="editTitle">Task title</label>
+      <input type="text" id="editTitle" minlength="2" maxlength="255" required [(ngModel)]="editTitle" name="editTitle">
+
+      <label for="editDescription">Description</label>
+      <textarea id="editDescription" maxlength="1050" rows="5" [(ngModel)]="editDescription"
+        name="editDescription"></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="editDueDate">Due date</label>
+          <input type="date" id="editDueDate" [(ngModel)]="editDueDate" name="editDueDate">
+        </div>
+        <div>
+          <label for="editPriority">Priority</label>
+          <select id="editPriority" required [(ngModel)]="editPriority" name="editPriority">
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
       </div>
 
-      <form (ngSubmit)="saveEdit($event)">
-        <label for="editTitle">Task title</label>
-        <input id="editTitle" type="text" minlength="2" maxlength="255" required name="title"
-               [ngModel]="editModel().title"
-               (ngModelChange)="editModel.update(v => ({ ...v, title: $event }))" />
+      <label for="editStatus">Status</label>
+      <select id="editStatus" required [(ngModel)]="editStatus" name="editStatus">
+        <option value="OPEN">Open</option>
+        <option value="COMPLETE">Complete</option>
+      </select>
 
-        <label for="editDescription">Description</label>
-        <textarea id="editDescription" maxlength="1050" rows="5" name="description"
-                  [ngModel]="editModel().description"
-                  (ngModelChange)="editModel.update(v => ({ ...v, description: $event }))"></textarea>
+      <p class="form-message">{{ editMessage }}</p>
 
-        <div class="form-row">
-          <div>
-            <label for="editDueDate">Due date</label>
-            <input id="editDueDate" type="date" name="dueDate"
-                   [ngModel]="editModel().dueDate"
-                   (ngModelChange)="editModel.update(v => ({ ...v, dueDate: $event }))" />
-          </div>
-          <div>
-            <label for="editPriority">Priority</label>
-            <select id="editPriority" required name="priority"
-                    [ngModel]="editModel().priority"
-                    (ngModelChange)="editModel.update(v => ({ ...v, priority: $event }))">
-              <option value="HIGH">High</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="LOW">Low</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="editStatus">Status</label>
-        <select id="editStatus" required name="status"
-                [ngModel]="editModel().status"
-                (ngModelChange)="editModel.update(v => ({ ...v, status: $event }))">
-          <option value="OPEN">Open</option>
-          <option value="COMPLETE">Complete</option>
-        </select>
-
-        @if (editMessage()) { <p class="form-message">{{ editMessage() }}</p> }
-
-        <div class="modal-actions">
-          <button type="button" class="secondary-button" (click)="closeEdit()">Cancel</button>
-          <button type="submit" class="primary-button" [disabled]="editSaving()">
-            {{ editSaving() ? 'Saving…' : 'Save changes' }}
-          </button>
-        </div>
-      </form>
-    </section>
-  </div>
-}
-
-<!-- Delete Modal -->
-@if (deleteOpen()) {
-  <div class="modal" (click)="closeDelete()">
-    <div class="modal-backdrop"></div>
-    <section class="modal-panel delete-panel" (click)="$event.stopPropagation()">
-      <div class="delete-icon">!</div>
-      <h3>Delete this task?</h3>
-      <p>This action cannot be undone. The selected task will be permanently removed.</p>
-      <strong>{{ deleteTarget()?.title }}</strong>
       <div class="modal-actions">
-        <button type="button" class="secondary-button" (click)="closeDelete()">Cancel</button>
-        <button type="button" class="danger-button" (click)="confirmDelete()" [disabled]="deleteSaving()">
-          {{ deleteSaving() ? 'Deleting…' : 'Delete task' }}
-        </button>
+        <button type="button" class="secondary-button" (click)="closeEdit()">Cancel</button>
+        <button type="submit" class="primary-button" [disabled]="editSaving">Save changes</button>
       </div>
-    </section>
-  </div>
-}
+    </form>
+  </section>
+</div>
 
-@if (toast(); as t) {
-  <div class="toast show" [class.error]="t.error">{{ t.message }}</div>
-}
+<!-- Delete modal -->
+<div class="modal" [class.hidden]="!deleteOpen">
+  <div class="modal-backdrop" (click)="closeDelete()"></div>
+
+  <section class="modal-panel delete-panel">
+    <div class="delete-icon">!</div>
+    <h3>Delete this task?</h3>
+    <p>This action cannot be undone. The selected task will be permanently removed.</p>
+    <strong>{{ deleteTitle }}</strong>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary-button" (click)="closeDelete()">Cancel</button>
+      <button type="button" class="danger-button" (click)="confirmDelete()">Delete task</button>
+    </div>
+  </section>
+</div>
+
+<div class="toast" [class.show]="toastMsg" [class.error]="toastError">{{ toastMsg }}</div>

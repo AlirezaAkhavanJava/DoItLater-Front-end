@@ -13,11 +13,11 @@
       <div class="header-right">
         <div class="date-navigation">
           <button class="nav-arrow" (click)="prevWeek()">‹</button>
-          <span>{{ dateRangeDisplay() }}</span>
+          <span id="date-range-display">{{ dateRangeDisplay() }}</span>
           <button class="nav-arrow" (click)="nextWeek()">›</button>
         </div>
 
-        <app-theme-toggle />
+        <app-theme-toggle></app-theme-toggle>
       </div>
     </header>
 
@@ -25,128 +25,126 @@
       <div class="grid-header">
         <div class="habit-label-col"></div>
         <div class="stats-col"></div>
-        <div class="days-row">
-          @for (iso of days(); track iso) {
-            <div class="day-label">
-              <span [style.color]="isToday(iso) ? '#fff' : '#888'" style="font-weight:600">
-                {{ dayLabel(iso) }}
-              </span>
-              <span [style.color]="isToday(iso) ? '#fff' : '#888'">{{ dayNumber(iso) }}</span>
-            </div>
-          }
+        <div class="days-row" id="days-header-row">
+          <div class="day-label" *ngFor="let iso of days()">
+            <span
+              [style.font-weight]="600"
+              [style.color]="isTodayIso(iso) ? '#fff' : '#888'"
+            >{{ dayLabel(iso) }}</span>
+            <span [style.color]="isTodayIso(iso) ? '#fff' : '#888'">{{ dayNumber(iso) }}</span>
+          </div>
         </div>
       </div>
 
-      <div class="habits-list">
-        @if (habits().length === 0) {
-          <div class="empty-state">No habits yet. Click "Track My Habit" to create one.</div>
-        }
+      <div class="habits-list" id="habits-list">
 
-        @for (habit of habits(); track habit.id) {
-          <div class="habit-row">
-            <div class="habit-info">
-              <span class="drag-handle">⣿</span>
-              <div class="color-dot" [style.background-color]="'var(--color-' + habit.color + ')'"></div>
-              <div class="habit-text">
-                <div class="habit-name-row">
-                  <a
-                    class="habit-name habit-name-link"
-                    [routerLink]="['/habits', habit.id]"
-                    [title]="habit.name">{{ habit.name }}</a>
-                  <app-priority-badge [priority]="habit.priority" />
-                </div>
-                @if (habit.description) {
-                  <div class="habit-description" [title]="habit.description">
-                    {{ habit.description.length > 60 ? habit.description.slice(0, 60).trimEnd() + '…' : habit.description }}
-                  </div>
-                }
-              </div>
-            </div>
+        <div class="empty-state" *ngIf="habits().length === 0">
+          No habits yet. Click "Track My Habit" to create one.
+        </div>
 
-            <div class="habit-stats">
-              <div class="stat-item">
-                <span class="stat-label">Completed</span>
-                <span class="stat-value">{{ habit.completedCount }}</span>
-              </div>
-              <div class="stat-item stat-item-failed">
-                <span class="stat-label">Failed</span>
-                <span class="stat-value">{{ habit.failedCount }}</span>
-              </div>
-            </div>
+        <div class="habit-row" *ngFor="let habit of habits()">
+          <div class="habit-info">
+            <span class="drag-handle">⣿</span>
+            <div class="color-dot" [style.background-color]="'var(--color-' + habit.color + ')'"></div>
+            <div class="habit-text">
+              <div class="habit-name-row">
+                <a
+                  class="habit-name habit-name-link"
+                  [routerLink]="['/habits', habit.id]"
+                  [title]="habit.name"
+                >{{ habit.name }}</a>
 
-            <div class="habit-days-grid">
-              @for (isDone of habit.history; track $index; let i = $index) {
-                <div
-                  class="day-check"
-                  [class.checked]="isDone"
-                  [class]="isDone ? habit.color : ''"
-                  [class.today]="isToday(days()[i])"
-                  [class.locked]="!isToday(days()[i])"
-                  (click)="toggleHabit(habit, i)">
-                </div>
-              }
+                <app-priority-badge [priority]="habit.priority"></app-priority-badge>
+              </div>
+              <div
+                class="habit-description"
+                *ngIf="habit.description"
+                [title]="habit.description"
+              >{{ habit.description.length > 60 ? (habit.description.slice(0, 60).trimEnd() + '…') : habit.description }}</div>
             </div>
           </div>
-        }
+
+          <div class="habit-stats">
+            <div class="stat-item">
+              <span class="stat-label">Completed</span>
+              <span class="stat-value">{{ habit.completedCount }}</span>
+            </div>
+            <div class="stat-item stat-item-failed">
+              <span class="stat-label">Failed</span>
+              <span class="stat-value">{{ habit.failedCount }}</span>
+            </div>
+          </div>
+
+          <div class="habit-days-grid">
+            <div
+              *ngFor="let isDone of habit.history; let i = index"
+              class="day-check"
+              [class.checked]="isDone"
+              [class.today]="isTodayIso(days()[i])"
+              [class.locked]="!isTodayIso(days()[i])"
+              [class.blue]="isDone && habit.color === 'blue'"
+              [class.green]="isDone && habit.color === 'green'"
+              [class.orange]="isDone && habit.color === 'orange'"
+              [class.red]="isDone && habit.color === 'red'"
+              [attr.aria-disabled]="!isTodayIso(days()[i])"
+              (click)="isTodayIso(days()[i]) && toggleHabit(habit.id, i)"
+            ></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Modal -->
-@if (modalOpen()) {
-  <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">New Habit</h2>
+<div id="habit-modal" class="modal-overlay" [hidden]="!modalOpen()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h2 class="modal-title">New Habit</h2>
 
-      <form (ngSubmit)="saveHabit()">
-        <div class="form-group">
-          <label for="habit-name">Habit name</label>
-          <input
-            type="text" id="habit-name" placeholder="e.g. Morning Run"
-            required maxlength="100"
-            [ngModel]="newHabit().name"
-            (ngModelChange)="newHabit.update(v => ({ ...v, name: $event }))"
-            name="name"
-          />
-        </div>
+    <form (ngSubmit)="submitHabit()">
+      <div class="form-group">
+        <label for="habit-name">Habit name</label>
+        <input
+          type="text"
+          id="habit-name"
+          name="name"
+          placeholder="e.g. Morning Run"
+          required
+          maxlength="100"
+          autocomplete="off"
+          [(ngModel)]="formName"
+        >
+      </div>
 
-        <div class="form-group">
-          <label for="habit-description">Description</label>
-          <textarea
-            id="habit-description" placeholder="Optional notes…" maxlength="1000" rows="3"
-            [ngModel]="newHabit().description"
-            (ngModelChange)="newHabit.update(v => ({ ...v, description: $event }))"
-            name="description"
-          ></textarea>
-        </div>
+      <div class="form-group">
+        <label for="habit-description">Description</label>
+        <textarea
+          id="habit-description"
+          name="description"
+          placeholder="Optional notes…"
+          maxlength="1000"
+          rows="3"
+          [(ngModel)]="formDescription"
+        ></textarea>
+      </div>
 
-        <div class="form-group">
-          <label for="habit-priority">Priority</label>
-          <select
-            id="habit-priority" required name="priority"
-            [ngModel]="newHabit().priority"
-            (ngModelChange)="newHabit.update(v => ({ ...v, priority: $event }))"
-          >
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="CRITICAL">Critical</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label for="habit-priority">Priority</label>
+        <select id="habit-priority" name="priority" required [(ngModel)]="formPriority">
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+      </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="saving()">
-            {{ saving() ? 'Saving…' : 'Create Habit' }}
-          </button>
-        </div>
-      </form>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">Create Habit</button>
+      </div>
+    </form>
 
-      @if (formError()) {
-        <p class="form-error">{{ formError() }}</p>
-      }
-    </div>
+    <p class="form-error" *ngIf="formError()" role="alert">{{ formError() }}</p>
   </div>
-}
+</div>

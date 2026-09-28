@@ -29,6 +29,18 @@
     --day-gap: clamp(6px, 0.8vw, 12px);
 }
 
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

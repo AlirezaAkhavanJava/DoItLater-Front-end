@@ -1,182 +1,101 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { HabitService } from '../../../core/services/habit.service';
-import { Habit, HabitPriority } from '../../../core/models/habit.model';
+import {
+  Habit,
+  HabitColor,
+  HabitDto,
+  HabitPriority,
+  WeekGridDto,
+} from '../../../core/models/habit.model';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 import { PriorityBadgeComponent } from '../../../shared/components/priority-badge/priority-badge';
 
 const DAYS_IN_WEEK = 7;
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const COLOR_CYCLE = ['blue', 'green', 'orange', 'red'] as const;
+const COLOR_CYCLE: HabitColor[] = ['blue', 'green', 'orange', 'red'];
 
 @Component({
   selector: 'app-habit-tracker',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, PriorityBadgeComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ThemeToggleComponent, PriorityBadgeComponent],
   templateUrl: './habit-tracker.html',
   styleUrl: './habit-tracker.scss',
 })
 export class HabitTrackerComponent implements OnInit {
   private habitService = inject(HabitService);
 
-  // ---- State ----
-  protected readonly habits = signal<Habit[]>([]);
-  protected readonly days = signal<string[]>([]);
-  protected readonly dateRangeDisplay = signal<string>('');
-  protected readonly weekStart = signal<Date>(this.computeInitialStart());
+  readonly dayLabels = DAY_LABELS;
 
-  // ---- Modal state ----
-  protected readonly modalOpen = signal(false);
-  protected readonly newHabit = signal({
-    name: '',
-    description: '',
-    priority: 'MEDIUM' as HabitPriority,
-  });
-  protected readonly formError = signal<string | null>(null);
-  protected readonly saving = signal(false);
+  today = this.startOfToday();
+  currentStartDate = this.startOfWeekWindow(this.today);
 
-  // ---- Computed ----
-  protected readonly todayIso = computed(() => this.toIso(new Date()));
+  days = signal<string[]>([]);
+  habits = signal<Habit[]>([]);
+  dateRangeDisplay = signal<string>('');
+
+  // modal state
+  modalOpen = signal(false);
+  formName = signal('');
+  formDescription = signal('');
+  formPriority = signal<HabitPriority>('MEDIUM');
+  formError = signal<string | null>(null);
+  saving = signal(false);
 
   ngOnInit(): void {
-    this.loadWeek(this.weekStart());
+    void this.fetchWeek();
   }
 
-  // ---- Week navigation ----
-  prevWeek(): void {
-    const d = new Date(this.weekStart());
-    d.setDate(d.getDate() - DAYS_IN_WEEK);
-    this.weekStart.set(d);
-    this.loadWeek(d);
+  // ---------- helpers (same logic as app.js) ----------
+  private startOfToday(): Date {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   }
 
-  nextWeek(): void {
-    const d = new Date(this.weekStart());
-    d.setDate(d.getDate() + DAYS_IN_WEEK);
-    this.weekStart.set(d);
-    this.loadWeek(d);
+  private startOfWeekWindow(base: Date): Date {
+    const d = new Date(base);
+    d.setDate(d.getDate() - (DAYS_IN_WEEK - 1));
+    return d;
   }
 
-  // ---- Helpers exposed to template ----
+  toISODate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  parseISODate(iso: string): Date {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  isDateToday(date: Date): boolean {
+    const now = new Date();
+    return (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    );
+  }
+
   dayLabel(iso: string): string {
-    return DAY_LABELS[this.parseIso(iso).getDay()];
+    return DAY_LABELS[this.parseISODate(iso).getDay()];
   }
 
   dayNumber(iso: string): number {
-    return this.parseIso(iso).getDate();
+    return this.parseISODate(iso).getDate();
   }
 
-  isToday(iso: string): boolean {
-    return iso === this.todayIso();
+  isTodayIso(iso: string): boolean {
+    return this.isDateToday(this.parseISODate(iso));
   }
 
-  // ---- Actions ----
-  toggleHabit(habit: Habit, dayIndex: number): void {
-    const iso = this.days()[dayIndex];
-    if (!iso || iso !== this.todayIso()) return;
-
-    const next = !habit.history[dayIndex];
-
-    // Optimistic update
-    this.habits.update((list) =>
-      list.map((h) =>
-        h.id === habit.id
-          ? { ...h, history: h.history.map((v, i) => (i === dayIndex ? next : v)) }
-          : h,
-      ),
-    );
-
-    this.habitService
-      .toggleEntry(habit.id, { entryDate: iso, completed: next, note: null })
-      .subscribe({
-        next: () => this.loadWeek(this.weekStart()),
-        error: (err) => {
-          console.error('Toggle failed:', err);
-          // Rollback
-          this.habits.update((list) =>
-            list.map((h) =>
-              h.id === habit.id
-                ? { ...h, history: h.history.map((v, i) => (i === dayIndex ? !next : v)) }
-                : h,
-            ),
-          );
-        },
-      });
-  }
-
-  openModal(): void {
-    this.newHabit.set({ name: '', description: '', priority: 'MEDIUM' });
-    this.formError.set(null);
-    this.modalOpen.set(true);
-  }
-
-  closeModal(): void {
-    this.modalOpen.set(false);
-  }
-
-  saveHabit(): void {
-    const { name, description, priority } = this.newHabit();
-    const trimmed = name.trim();
-
-    if (!trimmed) {
-      this.formError.set('Please enter a habit name.');
-      return;
-    }
-
-    this.saving.set(true);
-    this.formError.set(null);
-
-    this.habitService
-      .create({
-        name: trimmed,
-        priority,
-        description: description.trim() || null,
-      })
-      .subscribe({
-        next: () => {
-          this.closeModal();
-          this.loadWeek(this.weekStart());
-        },
-        error: (err) => {
-          this.formError.set(err?.error?.message ?? err?.message ?? 'Failed to create habit.');
-          this.saving.set(false);
-        },
-        complete: () => this.saving.set(false),
-      });
-  }
-
-  // ---- Data loading ----
-  private loadWeek(start: Date): void {
-    const iso = this.toIso(start);
-
-    this.habitService.getWeek(iso).subscribe({
-      next: (grid) => {
-        this.days.set(grid.days);
-        this.dateRangeDisplay.set(grid.dateRangeDisplay);
-
-        const mapped: Habit[] = grid.habits.map((dto) => {
-          const completedCount = dto.completedCount ?? 0;
-          const totalDays = dto.totalDays ?? 0;
-          const failedCount = Math.max(0, totalDays - completedCount);
-
-          return {
-            id: dto.id,
-            name: dto.name,
-            description: dto.description,
-            priority: dto.priority,
-            color: COLOR_CYCLE[dto.id % COLOR_CYCLE.length],
-            completedCount,
-            failedCount,
-            history: this.buildHistory(grid.days, dto.entries),
-          };
-        });
-
-        this.habits.set(mapped);
-      },
-      error: (err) => console.error('Failed to load week:', err),
-    });
+  private pickColor(id: number): HabitColor {
+    return COLOR_CYCLE[id % COLOR_CYCLE.length];
   }
 
   private buildHistory(days: string[], entries: { entryDate: string; completed: boolean }[]): boolean[] {
@@ -188,23 +107,108 @@ export class HabitTrackerComponent implements OnInit {
     return history;
   }
 
-  private computeInitialStart(): Date {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const start = new Date(today);
-    start.setDate(start.getDate() - (DAYS_IN_WEEK - 1));
-    return start;
+  private mapDtoToHabit(dto: HabitDto, days: string[]): Habit {
+    const completedCount = dto.completedCount ?? 0;
+    const totalDays = dto.totalDays ?? 0;
+    const failedCount = Math.max(0, totalDays - completedCount);
+
+    return {
+      id: dto.id,
+      name: dto.name,
+      description: dto.description,
+      priority: dto.priority,
+      color: this.pickColor(dto.id),
+      completedCount,
+      failedCount,
+      history: this.buildHistory(days, dto.entries ?? []),
+    };
   }
 
-  private toIso(d: Date): string {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
+  // ---------- data ----------
+  async fetchWeek(): Promise<void> {
+    try {
+      const grid: WeekGridDto = await this.habitService.getWeek(this.toISODate(this.currentStartDate));
+      this.days.set(grid.days);
+      this.dateRangeDisplay.set(grid.dateRangeDisplay);
+      this.habits.set(grid.habits.map((d) => this.mapDtoToHabit(d, grid.days)));
+    } catch (err) {
+      console.error('Failed to load week:', err);
+    }
   }
 
-  private parseIso(iso: string): Date {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d);
+  async toggleHabit(habitId: number, dayIndex: number): Promise<void> {
+    const list = this.habits();
+    const habit = list.find((h) => h.id === habitId);
+    if (!habit) return;
+
+    const iso = this.days()[dayIndex];
+    if (!iso) return;
+    if (iso !== this.toISODate(new Date())) return;
+
+    const next = !habit.history[dayIndex];
+
+    // optimistic update
+    habit.history[dayIndex] = next;
+    this.habits.set([...list]);
+
+    try {
+      await this.habitService.toggleEntry(habitId, {
+        entryDate: iso,
+        completed: next,
+        note: null,
+      });
+      await this.fetchWeek();
+    } catch (err) {
+      habit.history[dayIndex] = !next;
+      this.habits.set([...list]);
+      console.error('Toggle failed:', err);
+    }
+  }
+
+  // ---------- week nav ----------
+  prevWeek(): void {
+    this.currentStartDate.setDate(this.currentStartDate.getDate() - DAYS_IN_WEEK);
+    void this.fetchWeek();
+  }
+
+  nextWeek(): void {
+    this.currentStartDate.setDate(this.currentStartDate.getDate() + DAYS_IN_WEEK);
+    void this.fetchWeek();
+  }
+
+  // ---------- modal ----------
+  openModal(): void {
+    this.formName.set('');
+    this.formDescription.set('');
+    this.formPriority.set('MEDIUM');
+    this.formError.set(null);
+    this.modalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.modalOpen.set(false);
+  }
+
+  async submitHabit(): Promise<void> {
+    const name = this.formName().trim();
+    if (!name) {
+      this.formError.set('Please enter a habit name.');
+      return;
+    }
+    const description = this.formDescription().trim() || null;
+    const priority = this.formPriority();
+
+    this.saving.set(true);
+    this.formError.set(null);
+
+    try {
+      await this.habitService.create({ name, priority, description });
+      this.closeModal();
+      await this.fetchWeek();
+    } catch (err) {
+      this.formError.set(err instanceof Error ? err.message : String(err));
+    } finally {
+      this.saving.set(false);
+    }
   }
 }

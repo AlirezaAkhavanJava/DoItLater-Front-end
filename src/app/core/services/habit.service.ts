@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { API_BASE } from '../api.config';
 import {
   CreateHabitRequestDto,
   HabitDto,
@@ -12,30 +13,33 @@ import {
 @Injectable({ providedIn: 'root' })
 export class HabitService {
   private http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/v1/habits';
+  private base = `${API_BASE}/habits`;
 
-  getWeek(startDate: string): Observable<WeekGridDto> {
-    const params = new HttpParams().set('startDate', startDate);
-    return this.http.get<WeekGridDto>(`${this.base}/week`, { params });
+  getWeek(startDateIso: string): Promise<WeekGridDto> {
+    return firstValueFrom(
+      this.http.get<WeekGridDto>(`${this.base}/week`, {
+        params: { startDate: startDateIso },
+      })
+    );
   }
 
-  getById(id: number): Observable<HabitDto> {
-    return this.http.get<HabitDto>(`${this.base}/${id}`);
+  getById(id: number): Promise<HabitDto> {
+    return firstValueFrom(this.http.get<HabitDto>(`${this.base}/${id}`));
   }
 
-  create(payload: CreateHabitRequestDto): Observable<HabitDto> {
-    return this.http.post<HabitDto>(`${this.base}/create`, payload);
+  create(payload: CreateHabitRequestDto): Promise<void> {
+    return firstValueFrom(this.http.post<void>(`${this.base}/create`, payload));
   }
 
-  update(id: number, payload: UpdateHabitRequestDto): Observable<HabitDto> {
-    return this.http.put<HabitDto>(`${this.base}/${id}`, payload);
+  update(id: number, payload: UpdateHabitRequestDto): Promise<HabitDto> {
+    return firstValueFrom(this.http.put<HabitDto>(`${this.base}/${id}`, payload));
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.base}/${id}`);
+  delete(id: number): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.base}/${id}`));
   }
 
-  toggleEntry(id: number, payload: ToggleHabitEntryRequestDto): Observable<unknown> {
-    return this.http.post(`${this.base}/${id}/entries`, payload);
+  toggleEntry(id: number, payload: ToggleHabitEntryRequestDto): Promise<void> {
+    return firstValueFrom(this.http.post<void>(`${this.base}/${id}/entries`, payload));
   }
 }

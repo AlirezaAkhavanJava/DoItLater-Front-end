@@ -1,26 +1,31 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { CreateTaskRequest, Task, UpdateTaskRequest } from '../models/task.model';
+import { firstValueFrom } from 'rxjs';
+import { API_BASE } from '../api.config';
+import {
+  CreateTaskRequestDto,
+  TaskDto,
+  UpdateTaskRequestDto,
+} from '../models/task.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   private http = inject(HttpClient);
-  private readonly base = 'http://localhost:8080/api/v1/tasks';
+  private base = `${API_BASE}/tasks`;
 
-  list(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.base);
+  list(): Promise<TaskDto[]> {
+    return firstValueFrom(this.http.get<TaskDto[]>(this.base));
   }
 
-  create(payload: CreateTaskRequest): Observable<Task> {
-    return this.http.post<Task>(`${this.base}/createTask`, payload);
+  create(payload: CreateTaskRequestDto): Promise<TaskDto> {
+    return firstValueFrom(this.http.post<TaskDto>(`${this.base}/createTask`, payload));
   }
 
-  update(id: number, payload: UpdateTaskRequest): Observable<Task> {
-    return this.http.put<Task>(`${this.base}/${id}`, payload);
+  update(id: number, payload: UpdateTaskRequestDto): Promise<TaskDto> {
+    return firstValueFrom(this.http.put<TaskDto>(`${this.base}/${id}`, payload));
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.base}/delete/${id}`);
+  delete(id: number): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.base}/delete/${id}`));
   }
 }

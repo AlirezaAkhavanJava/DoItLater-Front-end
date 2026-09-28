@@ -6,9 +6,9 @@ import { ThemeService } from './core/services/theme.service';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
-  template: `<router-outlet />`,
+  template: `<router-outlet></router-outlet>`,
 })
 export class App {
-  // Injected so the effect() runs immediately on boot and applies the saved theme
+  // Instantiate ThemeService so it applies the theme immediately on boot
   private theme = inject(ThemeService);
 }

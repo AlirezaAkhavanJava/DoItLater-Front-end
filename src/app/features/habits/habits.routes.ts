@@ -1,14 +1,8 @@
 import { Routes } from '@angular/router';
+import { HabitTrackerComponent } from './habit-tracker/habit-tracker';
+import { HabitDetailComponent } from './habit-detail/habit-detail';
 
 export const HABITS_ROUTES: Routes = [
-  {
-    path: '',
-    loadComponent: () =>
-      import('./habit-tracker/habit-tracker').then((m) => m.HabitTrackerComponent),
-  },
-  {
-    path: ':id',
-    loadComponent: () =>
-      import('./habit-detail/habit-detail').then((m) => m.HabitDetailComponent),
-  },
+  { path: '', component: HabitTrackerComponent },
+  { path: ':id', component: HabitDetailComponent },
 ];

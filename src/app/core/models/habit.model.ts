@@ -1,3 +1,7 @@
+// ============================================================
+//  Domain + API types for Habits
+// ============================================================
+
 export type HabitColor = 'blue' | 'green' | 'orange' | 'red';
 export type HabitPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
@@ -46,7 +50,6 @@ export interface ToggleHabitEntryRequestDto {
   note?: string | null;
 }
 
-/** Client-side view model for the weekly grid */
 export interface Habit {
   id: number;
   name: string;

@@ -2,10 +2,24 @@
    Habit detail page
    ============================================================ */
 
+
+:host {
+    display: block;
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+}
+
 .detail-card {
-    max-width: 1180px;  
+    max-width: 1180px;
     min-height: auto;
 }
+
 .detail-header-actions {
     display: flex;
     align-items: center;
@@ -149,7 +163,8 @@
     /* columns are set inline via JS to match the number of weeks */
     font-size: 0.72rem;
     color: var(--text-muted);
-    padding-left: 34px; /* space for the weekday column */
+    padding-left: 34px;
+    /* space for the weekday column */
     letter-spacing: 0.3px;
 }
 
@@ -177,9 +192,17 @@
     flex-shrink: 0;
 }
 
-.heatmap-weekdays span:nth-child(1) { grid-row: 2; }
-.heatmap-weekdays span:nth-child(2) { grid-row: 4; }
-.heatmap-weekdays span:nth-child(3) { grid-row: 6; }
+.heatmap-weekdays span:nth-child(1) {
+    grid-row: 2;
+}
+
+.heatmap-weekdays span:nth-child(2) {
+    grid-row: 4;
+}
+
+.heatmap-weekdays span:nth-child(3) {
+    grid-row: 6;
+}
 
 .heatmap-grid {
     display: grid;
@@ -205,11 +228,25 @@
 }
 
 /* --- GitHub-style green palette --- */
-.heatmap-cell.level-0 { background-color: #161b22; }
-.heatmap-cell.level-1 { background-color: #0e4429; }
-.heatmap-cell.level-2 { background-color: #006d32; }
-.heatmap-cell.level-3 { background-color: #26a641; }
-.heatmap-cell.level-4 { background-color: #39d353; }
+.heatmap-cell.level-0 {
+    background-color: #161b22;
+}
+
+.heatmap-cell.level-1 {
+    background-color: #0e4429;
+}
+
+.heatmap-cell.level-2 {
+    background-color: #006d32;
+}
+
+.heatmap-cell.level-3 {
+    background-color: #26a641;
+}
+
+.heatmap-cell.level-4 {
+    background-color: #39d353;
+}
 
 /* --- Custom tooltip --- */
 .heatmap-cell[data-tooltip]:hover::after {

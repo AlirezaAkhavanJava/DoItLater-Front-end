@@ -7,158 +7,157 @@
       </div>
 
       <div class="detail-header-actions">
-        <app-theme-toggle />
+        <app-theme-toggle></app-theme-toggle>
         <button class="btn-secondary" (click)="openEdit()">Edit</button>
         <button class="btn-danger" (click)="openDelete()">Delete</button>
       </div>
     </header>
 
-    @if (loading()) {
-      <div class="empty-state">Loading habit…</div>
-    }
+    <div *ngIf="loading" class="empty-state">Loading habit…</div>
 
-    @if (errorMessage()) {
-      <div class="form-error">{{ errorMessage() }}</div>
-    }
+    <div *ngIf="error" class="form-error">{{ error }}</div>
 
-    @if (habit(); as h) {
-      @if (!loading()) {
-        <div>
-          <div class="detail-title-block">
-            <div class="detail-title-row">
-              <div class="color-dot color-dot-lg"
-                   [style.background-color]="'var(--color-' + colorDot() + ')'"></div>
-              <h1 class="detail-title">{{ h.name }}</h1>
-              <app-priority-badge [priority]="h.priority" />
+    <div *ngIf="!loading && !error && habit">
+
+      <div class="detail-title-block">
+        <div class="detail-title-row">
+          <div class="color-dot color-dot-lg" [style.background-color]="'var(--color-' + color + ')'"></div>
+          <h1 class="detail-title">{{ habit.name }}</h1>
+          <app-priority-badge [priority]="habit.priority"></app-priority-badge>
+        </div>
+        <p class="detail-description" *ngIf="habit.description">{{ habit.description }}</p>
+        <p class="detail-description" *ngIf="!habit.description" style="color:#555;font-style:italic;">
+          No description provided.
+        </p>
+
+        <div class="detail-meta">
+          <span>Created <time>{{ formatDate(habit.createdDate) }}</time></span>
+        </div>
+      </div>
+
+      <div class="detail-stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value">{{ completedCount }}</div>
+        </div>
+        <div class="stat-card stat-card-failed">
+          <div class="stat-label">Failed</div>
+          <div class="stat-value">{{ failedCount }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Days</div>
+          <div class="stat-value">{{ totalDays }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completion</div>
+          <div class="stat-value">{{ rate.toFixed(1) }}%</div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2 class="detail-section-title">Full history</h2>
+        <div class="heatmap-wrap">
+          <div
+            class="heatmap-months"
+            [style.grid-template-columns]="'repeat(52, 13px)'"
+            style="column-gap:3px;"
+          >
+            <span
+              *ngFor="let m of monthLabels"
+              [style.gridColumn]="m.col"
+              style="grid-row:1;"
+            >{{ m.text }}</span>
+          </div>
+
+          <div class="heatmap-body">
+            <div class="heatmap-weekdays">
+              <span>Mon</span>
+              <span>Wed</span>
+              <span>Fri</span>
             </div>
-            <p class="detail-description">
-              {{ h.description || 'No description provided.' }}
-            </p>
-            <div class="detail-meta">
-              <span>Created <time>{{ formatDate(h.createdDate) }}</time></span>
+            <div class="heatmap-grid">
+              <div
+                *ngFor="let c of heatmapCells"
+                class="heatmap-cell"
+                [class.level-0]="c.visible && c.level === 0"
+                [class.level-1]="c.visible && c.level === 1"
+                [class.level-2]="c.visible && c.level === 2"
+                [class.level-3]="c.visible && c.level === 3"
+                [class.level-4]="c.visible && c.level === 4"
+                [style.visibility]="c.visible ? 'visible' : 'hidden'"
+                [attr.data-tooltip]="c.tooltip || null"
+              ></div>
             </div>
           </div>
 
-          <div class="detail-stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">Completed</div>
-              <div class="stat-value">{{ completedCount() }}</div>
-            </div>
-            <div class="stat-card stat-card-failed">
-              <div class="stat-label">Failed</div>
-              <div class="stat-value">{{ failedCount() }}</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Total Days</div>
-              <div class="stat-value">{{ totalDays() }}</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Completion</div>
-              <div class="stat-value">{{ completionRate() }}</div>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <h2 class="detail-section-title">Full history</h2>
-            <div class="heatmap-wrap">
-              <div class="heatmap-months"
-                   [style.grid-template-columns]="'repeat(' + 52 + ', 13px)'"
-                   style="column-gap: 3px">
-                @for (m of heatmapMonthLabels(); track m.col) {
-                  <span [style.grid-column]="m.col" style="grid-row: 1">{{ m.label }}</span>
-                }
-              </div>
-              <div class="heatmap-body">
-                <div class="heatmap-weekdays">
-                  <span>Mon</span><span>Wed</span><span>Fri</span>
-                </div>
-                <div class="heatmap-grid">
-                  @for (cell of heatmapCells(); track $index) {
-                    <div
-                      class="heatmap-cell"
-                      [class]="cell.hidden ? '' : 'level-' + cell.level"
-                      [style.visibility]="cell.hidden ? 'hidden' : 'visible'"
-                      [attr.data-tooltip]="cell.hidden ? null : cell.tooltip">
-                    </div>
-                  }
-                </div>
-              </div>
-              <div class="heatmap-legend">
-                <span>Less</span>
-                <span class="heatmap-cell level-0"></span>
-                <span class="heatmap-cell level-1"></span>
-                <span class="heatmap-cell level-2"></span>
-                <span class="heatmap-cell level-3"></span>
-                <span class="heatmap-cell level-4"></span>
-                <span>More</span>
-              </div>
-            </div>
+          <div class="heatmap-legend">
+            <span>Less</span>
+            <span class="heatmap-cell level-0"></span>
+            <span class="heatmap-cell level-1"></span>
+            <span class="heatmap-cell level-2"></span>
+            <span class="heatmap-cell level-3"></span>
+            <span class="heatmap-cell level-4"></span>
+            <span>More</span>
           </div>
         </div>
-      }
-    }
+      </div>
+
+    </div>
 
   </div>
 </div>
 
 <!-- Edit modal -->
-@if (editOpen()) {
-  <div class="modal-overlay" (click)="closeEdit()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">Edit Habit</h2>
-      <form (ngSubmit)="saveEdit()">
-        <div class="form-group">
-          <label for="edit-name">Habit name</label>
-          <input id="edit-name" type="text" required maxlength="100" name="name"
-                 [ngModel]="editModel().name"
-                 (ngModelChange)="editModel.update(v => ({ ...v, name: $event }))" />
-        </div>
-        <div class="form-group">
-          <label for="edit-description">Description</label>
-          <textarea id="edit-description" maxlength="1000" rows="3" name="description"
-                    [ngModel]="editModel().description"
-                    (ngModelChange)="editModel.update(v => ({ ...v, description: $event }))"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="edit-priority">Priority</label>
-          <select id="edit-priority" required name="priority"
-                  [ngModel]="editModel().priority"
-                  (ngModelChange)="editModel.update(v => ({ ...v, priority: $event }))">
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="CRITICAL">Critical</option>
-          </select>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="closeEdit()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="editSaving()">
-            {{ editSaving() ? 'Saving…' : 'Save Changes' }}
-          </button>
-        </div>
-      </form>
-      @if (editError()) { <p class="form-error">{{ editError() }}</p> }
-    </div>
+<div id="edit-modal" class="modal-overlay" [hidden]="!editOpen">
+  <div class="modal">
+    <h2 class="modal-title">Edit Habit</h2>
+
+    <form (ngSubmit)="submitEdit()">
+      <div class="form-group">
+        <label for="edit-name">Habit name</label>
+        <input type="text" id="edit-name" required maxlength="100" autocomplete="off" [(ngModel)]="editName" name="name">
+      </div>
+
+      <div class="form-group">
+        <label for="edit-description">Description</label>
+        <textarea id="edit-description" maxlength="1000" rows="3" [(ngModel)]="editDescription" name="description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-priority">Priority</label>
+        <select id="edit-priority" required [(ngModel)]="editPriority" name="priority">
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeEdit()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="editSaving">Save Changes</button>
+      </div>
+    </form>
+
+    <p class="form-error" *ngIf="editError">{{ editError }}</p>
   </div>
-}
+</div>
 
 <!-- Delete modal -->
-@if (deleteOpen()) {
-  <div class="modal-overlay" (click)="closeDelete()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">Delete habit?</h2>
-      <p class="modal-text">
-        This will permanently delete
-        <strong>"{{ habit()?.name }}"</strong>
-        and all of its history. This action cannot be undone.
-      </p>
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" (click)="closeDelete()">Cancel</button>
-        <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="deleteSaving()">
-          {{ deleteSaving() ? 'Deleting…' : 'Delete' }}
-        </button>
-      </div>
-      @if (deleteError()) { <p class="form-error">{{ deleteError() }}</p> }
+<div id="delete-modal" class="modal-overlay" [hidden]="!deleteOpen">
+  <div class="modal">
+    <h2 class="modal-title">Delete habit?</h2>
+    <p class="modal-text">
+      This will permanently delete
+      <strong>"{{ deleteDisplayName }}"</strong>
+      and all of its history. This action cannot be undone.
+    </p>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="closeDelete()">Cancel</button>
+      <button type="button" class="btn-danger" [disabled]="deleteSaving" (click)="confirmDelete()">Delete</button>
     </div>
+
+    <p class="form-error" *ngIf="deleteError">{{ deleteError }}</p>
   </div>
-}
+</div>

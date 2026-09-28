@@ -1,51 +1,55 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
-export type ThemeName = '90s' | 'hana';
+export type Theme = '90s' | 'hana';
+
+const STORAGE_KEY = 'doitlater.theme';
+const THEMES: Theme[] = ['90s', 'hana'];
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly STORAGE_KEY = 'doitlater.theme';
-  private readonly THEMES: ThemeName[] = ['90s', 'hana'];
-  private readonly defaultTheme: ThemeName = '90s';
-
-  readonly theme = signal<ThemeName>(this.readSaved() ?? this.defaultTheme);
+  readonly theme = signal<Theme>(this.readSaved() ?? '90s');
 
   constructor() {
-    // React to theme changes
-    effect(() => {
-      const t = this.theme();
-      document.documentElement.setAttribute('data-theme', t);
-      try { localStorage.setItem(this.STORAGE_KEY, t); } catch { /* ignore */ }
-    });
+    this.apply(this.theme());
 
-    // Cross-tab sync
+    // cross-tab sync
     window.addEventListener('storage', (e) => {
-      if (e.key !== this.STORAGE_KEY) return;
-      const v = e.newValue as ThemeName | null;
-      if (v && this.THEMES.includes(v) && v !== this.theme()) {
-        this.theme.set(v);
-      }
+      if (e.key !== STORAGE_KEY) return;
+      if (!THEMES.includes(e.newValue as Theme)) return;
+      this.theme.set(e.newValue as Theme);
+      this.apply(this.theme());
     });
   }
 
-  toggle(): void {
-    this.theme.set(this.theme() === '90s' ? 'hana' : '90s');
-  }
-
-  label(): string {
-    return this.theme() === '90s' ? "90's" : 'Hana';
-  }
-
-  nextLabel(): string {
-    return this.theme() === '90s' ? 'Hana' : "90's";
-  }
-
-  private readSaved(): ThemeName | null {
+  private readSaved(): Theme | null {
     try {
-      const v = localStorage.getItem(this.STORAGE_KEY) as ThemeName | null;
-      return v && this.THEMES.includes(v) ? v : null;
+      const v = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
+      return v && THEMES.includes(v) ? v : null;
     } catch {
       return null;
+    }
+  }
+
+  private apply(theme: Theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  labelFor(theme: Theme): string {
+    return theme === '90s' ? "90's" : 'Hana';
+  }
+
+  toggle() {
+    this.set(this.theme() === '90s' ? 'hana' : '90s');
+  }
+
+  set(theme: Theme) {
+    if (!THEMES.includes(theme)) return;
+    this.theme.set(theme);
+    this.apply(theme);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      /* ignore */
     }
   }
 }
