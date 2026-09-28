@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+//import { RouterLink } from '@angular/router';
 import { TaskService } from '../../../core/services/task.service';
 import { Task, TaskPriority, TaskStatus } from '../../../core/models/task.model';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
@@ -11,9 +11,10 @@ type Filter = 'ALL' | 'OPEN' | 'COMPLETE';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
+  //imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
+  imports: [CommonModule, FormsModule, ThemeToggleComponent],
   templateUrl: './task-list.html',
-  styleUrl: './task-list.css',
+  styleUrl: './task-list.scss',
 })
 export class TaskListComponent implements OnInit {
   private taskService = inject(TaskService);
