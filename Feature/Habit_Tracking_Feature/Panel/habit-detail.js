@@ -23,41 +23,41 @@ let habit = null;
 // ============================================================
 //  DOM
 // ============================================================
-const loadingEl        = document.getElementById('detail-loading');
-const errorEl          = document.getElementById('detail-error');
-const contentEl        = document.getElementById('detail-content');
+const loadingEl = document.getElementById('detail-loading');
+const errorEl = document.getElementById('detail-error');
+const contentEl = document.getElementById('detail-content');
 
-const editHabitBtn     = document.getElementById('edit-habit-btn');
-const deleteHabitBtn   = document.getElementById('delete-habit-btn');
+const editHabitBtn = document.getElementById('edit-habit-btn');
+const deleteHabitBtn = document.getElementById('delete-habit-btn');
 
-const colorDotEl       = document.getElementById('detail-color-dot');
-const nameEl           = document.getElementById('detail-name');
-const priorityEl       = document.getElementById('detail-priority-badge');
-const descriptionEl    = document.getElementById('detail-description');
-const createdDateEl    = document.getElementById('detail-created-date');
+const colorDotEl = document.getElementById('detail-color-dot');
+const nameEl = document.getElementById('detail-name');
+const priorityEl = document.getElementById('detail-priority-badge');
+const descriptionEl = document.getElementById('detail-description');
+const createdDateEl = document.getElementById('detail-created-date');
 
-const statCompletedEl  = document.getElementById('stat-completed');
-const statFailedEl     = document.getElementById('stat-failed');
-const statTotalEl      = document.getElementById('stat-total');
-const statRateEl       = document.getElementById('stat-rate');
+const statCompletedEl = document.getElementById('stat-completed');
+const statFailedEl = document.getElementById('stat-failed');
+const statTotalEl = document.getElementById('stat-total');
+const statRateEl = document.getElementById('stat-rate');
 
-const heatmapMonthsEl  = document.getElementById('heatmap-months');
-const heatmapGridEl    = document.getElementById('heatmap-grid');
+const heatmapMonthsEl = document.getElementById('heatmap-months');
+const heatmapGridEl = document.getElementById('heatmap-grid');
 
-const editModal        = document.getElementById('edit-modal');
-const editForm         = document.getElementById('edit-form');
-const editNameInput    = document.getElementById('edit-name');
-const editDescInput    = document.getElementById('edit-description');
-const editPrioritySel  = document.getElementById('edit-priority');
-const cancelEditBtn    = document.getElementById('cancel-edit-btn');
-const saveEditBtn      = document.getElementById('save-edit-btn');
-const editFormError    = document.getElementById('edit-form-error');
+const editModal = document.getElementById('edit-modal');
+const editForm = document.getElementById('edit-form');
+const editNameInput = document.getElementById('edit-name');
+const editDescInput = document.getElementById('edit-description');
+const editPrioritySel = document.getElementById('edit-priority');
+const cancelEditBtn = document.getElementById('cancel-edit-btn');
+const saveEditBtn = document.getElementById('save-edit-btn');
+const editFormError = document.getElementById('edit-form-error');
 
-const deleteModal      = document.getElementById('delete-modal');
-const deleteHabitName  = document.getElementById('delete-habit-name');
-const cancelDeleteBtn  = document.getElementById('cancel-delete-btn');
+const deleteModal = document.getElementById('delete-modal');
+const deleteHabitName = document.getElementById('delete-habit-name');
+const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
 const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-const deleteFormError  = document.getElementById('delete-form-error');
+const deleteFormError = document.getElementById('delete-form-error');
 
 // ============================================================
 //  Helpers
@@ -126,14 +126,14 @@ const renderDetail = () => {
 
     // ---- Trust the backend for totalDays / completedCount ----
     const completedCount = habit.completedCount ?? 0;
-    const totalDays      = habit.totalDays ?? 0;
-    const failedCount    = Math.max(0, totalDays - completedCount);
-    const rate           = totalDays === 0 ? 0 : (completedCount * 100 / totalDays);
+    const totalDays = habit.totalDays ?? 0;
+    const failedCount = Math.max(0, totalDays - completedCount);
+    const rate = totalDays === 0 ? 0 : (completedCount * 100 / totalDays);
 
     statCompletedEl.textContent = String(completedCount);
-    statFailedEl.textContent    = String(failedCount);
-    statTotalEl.textContent     = String(totalDays);
-    statRateEl.textContent      = `${rate.toFixed(1)}%`;
+    statFailedEl.textContent = String(failedCount);
+    statTotalEl.textContent = String(totalDays);
+    statRateEl.textContent = `${rate.toFixed(1)}%`;
 };
 
 // ============================================================
@@ -389,7 +389,7 @@ confirmDeleteBtn.addEventListener('click', async () => {
 
     try {
         await deleteHabit();
-        window.location.href = './tcr.html';
+        window.location.href = '../Dashboard/Habit_Dash.html';
     } catch (err) {
         deleteFormError.textContent = err instanceof Error ? err.message : String(err);
         deleteFormError.hidden = false;
