@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track My Habit</title>
+    <link rel="stylesheet" href="tcr.css">
+    <link rel="stylesheet" href="/themes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/themes.js" data-default-theme="hana"></script>
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <div class="dashboard-card">
+
+            <header class="card-header">
+                <div class="header-left">
+                    <button id="add-habit-btn" class="btn-primary">
+                        <span class="plus-icon">+</span> Track My Habit
+                    </button>
+
+                    <a href="../TaskTracker-GUI/main.html" class="btn-nav">
+                        Tasks →
+                    </a>
+                </div>
+
+                <div class="header-right">
+                    <div class="date-navigation">
+                        <button class="nav-arrow" id="prev-week">‹</button>
+                        <span id="date-range-display">Dec 30 - Jan 13, 2025</span>
+                        <button class="nav-arrow" id="next-week">›</button>
+                    </div>
+
+                    <button type="button" class="theme-toggle" data-theme-toggle>Theme: Hana</button>
+                </div>
+            </header>
+
+            <div class="habit-grid-container">
+                <div class="grid-header">
+                    <div class="habit-label-col"></div>
+                    <div class="stats-col"></div>
+                    <div class="days-row" id="days-header-row"></div>
+                </div>
+
+                <div class="habits-list" id="habits-list"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="habit-modal" class="modal-overlay" hidden>
+        <div class="modal">
+            <h2 class="modal-title">New Habit</h2>
+
+            <form id="habit-form">
+                <div class="form-group">
+                    <label for="habit-name">Habit name</label>
+                    <input type="text" id="habit-name" name="name" placeholder="e.g. Morning Run" required
+                        maxlength="100" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="habit-description">Description</label>
+                    <textarea id="habit-description" name="description" placeholder="Optional notes…" maxlength="1000"
+                        rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="habit-priority">Priority</label>
+                    <select id="habit-priority" name="priority" required>
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM" selected>Medium</option>
+                        <option value="HIGH">High</option>
+                        <option value="CRITICAL">Critical</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="cancel-habit-btn" class="btn-secondary">Cancel</button>
+                    <button type="submit" id="save-habit-btn" class="btn-primary">Create Habit</button>
+                </div>
+            </form>
+
+            <p id="habit-form-error" class="form-error" hidden></p>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
