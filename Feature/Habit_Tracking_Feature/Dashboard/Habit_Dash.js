@@ -14,8 +14,13 @@ const DAYS_IN_WEEK = 7;
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
+// Monday of the current week. The API snaps any date to the
+// Mon–Sun week that contains it, so we must hand it a Monday —
+// otherwise "today − 6" lands in the previous week on every
+// day of the week except Sunday.
 let currentStartDate = new Date(today);
-currentStartDate.setDate(currentStartDate.getDate() - (DAYS_IN_WEEK - 1));
+const dow = (currentStartDate.getDay() + 6) % 7; // Mon = 0 … Sun = 6
+currentStartDate.setDate(currentStartDate.getDate() - dow);
 
 /** @type {import('../types.js').Habit[]} */
 let habits = [];
