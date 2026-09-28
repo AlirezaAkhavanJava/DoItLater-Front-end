@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DoItLater - A comprehensive task and habit tracker application">
+    <title>DoItLater - Task & Habit Tracker</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="Index.html">
+                    <span class="logo-icon">✓</span>
+                    <span class="logo-text">DoItLater</span>
+                </a>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#features" class="nav-link">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link theme-toggle" id="themeToggle">🌙</a>
+                </li>
+            </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Take Control of Your Time</h1>
+            <p class="hero-subtitle">Track tasks, build habits, and achieve your goals with DoItLater</p>
+            
+            <div class="hero-buttons">
+                <a href="pages/task-tracker.html" class="btn btn-primary">Get Started with Tasks</a>
+                <a href="pages/habit-tracker.html" class="btn btn-secondary">Build Habits</a>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="hero-card">
+                <div class="card-header">📋 Task Tracker</div>
+                <div class="card-item">✓ Complete important project</div>
+                <div class="card-item">✓ Review team feedback</div>
+                <div class="card-item">○ Plan next sprint</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>Why Choose DoItLater?</h2>
+            <p>Everything you need to stay productive and achieve your goals</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Task Tracker Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Task Tracker</h3>
+                <p>Organize your daily tasks with ease. Create, prioritize, edit, and mark tasks as complete. Stay focused on what matters most.</p>
+                <ul class="feature-list">
+                    <li>Create and manage tasks</li>
+                    <li>Set priorities and deadlines</li>
+                    <li>Track completion status</li>
+                    <li>Edit and update tasks</li>
+                </ul>
+                <a href="pages/task-tracker.html" class="feature-link">Explore Task Tracker →</a>
+            </div>
+
+            <!-- Habit Tracker Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Habit Tracker</h3>
+                <p>Build positive habits and break negative ones. Monitor your progress with detailed insights and statistics. Transform your life one habit at a time.</p>
+                <ul class="feature-list">
+                    <li>Create custom habits</li>
+                    <li>Track daily progress</li>
+                    <li>View detailed statistics</li>
+                    <li>Build streaks and momentum</li>
+                </ul>
+                <a href="pages/habit-tracker.html" class="feature-link">Explore Habit Tracker →</a>
+            </div>
+
+            <!-- Theme Customization Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Personalized Themes</h3>
+                <p>Customize your experience with multiple theme options. Choose from light or dark mode, and select your favorite color palette.</p>
+                <ul class="feature-list">
+                    <li>Light & Dark themes</li>
+                    <li>5 color themes</li>
+                    <li>Auto-saved preferences</li>
+                    <li>Reduced eye strain</li>
+                </ul>
+                <a href="#" class="feature-link">Customize Now →</a>
+            </div>
+
+            <!-- Responsive Design Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Works Everywhere</h3>
+                <p>Access DoItLater on any device. Our responsive design ensures a seamless experience on desktop, tablet, and mobile.</p>
+                <ul class="feature-list">
+                    <li>Desktop optimized</li>
+                    <li>Tablet ready</li>
+                    <li>Mobile friendly</li>
+                    <li>Fast loading</li>
+                </ul>
+                <a href="#" class="feature-link">Learn More →</a>
+            </div>
+
+            <!-- Organization Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Stay Organized</h3>
+                <p>Categorize, sort, and filter your tasks and habits. Gain insights with detailed statistics and progress tracking.</p>
+                <ul class="feature-list">
+                    <li>Categorize items</li>
+                    <li>Sort and filter options</li>
+                    <li>Progress visualization</li>
+                    <li>Achievement badges</li>
+                </ul>
+                <a href="#" class="feature-link">Get Organized →</a>
+            </div>
+
+            <!-- Productivity Feature -->
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Boost Productivity</h3>
+                <p>Increase your productivity with smart features like task prioritization, deadline reminders, and habit streaks.</p>
+                <ul class="feature-list">
+                    <li>Smart prioritization</li>
+                    <li>Deadline tracking</li>
+                    <li>Streak counting</li>
+                    <li>Progress reminders</li>
+                </ul>
+                <a href="#" class="feature-link">Start Productive →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Get started in three simple steps</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Choose Your Tool</h3>
+                <p>Select between Task Tracker for daily tasks or Habit Tracker for building positive habits.</p>
+            </div>
+
+            <div class="step-arrow">→</div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Add Your Items</h3>
+                <p>Create tasks or habits that matter to you. Set priorities, deadlines, or frequency as needed.</p>
+            </div>
+
+            <div class="step-arrow">→</div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Track & Succeed</h3>
+                <p>Monitor your progress, celebrate wins, and achieve your goals with insights and statistics.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Themes Section -->
+    <section class="themes-showcase">
+        <div class="section-header">
+            <h2>Available Themes</h2>
+            <p>Personalize your experience with multiple theme options</p>
+        </div>
+
+        <div class="theme-options">
+            <div class="theme-preview">
+                <div class="theme-box theme-default">
+                    <div class="theme-sample"></div>
+                </div>
+                <p>Default (Indigo)</p>
+            </div>
+
+            <div class="theme-preview">
+                <div class="theme-box theme-purple">
+                    <div class="theme-sample"></div>
+                </div>
+                <p>Purple</p>
+            </div>
+
+            <div class="theme-preview">
+                <div class="theme-box theme-blue">
+                    <div class="theme-sample"></div>
+                </div>
+                <p>Blue</p>
+            </div>
+
+            <div class="theme-preview">
+                <div class="theme-box theme-green">
+                    <div class="theme-sample"></div>
+                </div>
+                <p>Green</p>
+            </div>
+
+            <div class="theme-preview">
+                <div class="theme-box theme-orange">
+                    <div class="theme-sample"></div>
+                </div>
+                <p>Orange</p>
+            </div>
+        </div>
+
+        <div class="theme-mode-toggle">
+            <button class="mode-btn light-mode">☀️ Light Mode</button>
+            <button class="mode-btn dark-mode">🌙 Dark Mode</button>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-header">
+            <h2>About DoItLater</h2>
+            <p>Your companion for success</p>
+        </div>
+
+        <div class="about-content">
+            <div class="about-text">
+                <h3>What is DoItLater?</h3>
+                <p>DoItLater is a modern, intuitive task and habit tracking application designed to help you manage your time effectively and build positive habits. Whether you're juggling multiple projects at work or working on personal development, DoItLater provides the tools you need to stay focused, organized, and motivated.</p>
+                
+                <h3>Our Mission</h3>
+                <p>We believe that everyone has the potential to achieve great things. By providing a simple yet powerful platform for task and habit management, we empower users to take control of their time, set achievable goals, and build the habits that lead to success.</p>
+
+                <h3>Key Values</h3>
+                <ul class="values-list">
+                    <li><strong>Simplicity:</strong> Easy to use, but powerful enough for complex needs</li>
+                    <li><strong>Reliability:</strong> Your tasks and habits are saved safely</li>
+                    <li><strong>Customization:</strong> Make it yours with themes and personal settings</li>
+                    <li><strong>Productivity:</strong> Designed to help you accomplish more</li>
+                </ul>
+            </div>
+
+            <div class="about-stats">
+                <div class="stat">
+                    <div class="stat-number">2</div>
+                    <p>Powerful Tools</p>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">5</div>
+                    <p>Color Themes</p>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">2</div>
+                    <p>Mode Options</p>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">∞</div>
+                    <p>Possibilities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Take Control of Your Time?</h2>
+            <p>Join thousands of users who are already managing their tasks and building better habits with DoItLater.</p>
+            
+            <div class="cta-buttons">
+                <a href="pages/task-tracker.html" class="btn btn-large btn-primary">Start Task Tracking</a>
+                <a href="pages/habit-tracker.html" class="btn btn-large btn-secondary">Start Building Habits</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>DoItLater</h4>
+                <p>Your personal task and habit tracking companion.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="Index.html">Home</a></li>
+                    <li><a href="pages/task-tracker.html">Task Tracker</a></li>
+                    <li><a href="pages/habit-tracker.html">Habit Tracker</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Features</h4>
+                <ul>
+                    <li><a href="#features">Task Management</a></li>
+                    <li><a href="#features">Habit Tracking</a></li>
+                    <li><a href="#features">Custom Themes</a></li>
+                    <li><a href="#features">Statistics</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 DoItLater. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="themes.js"></script>
+    <script src="assets/js/themes.js"></script>
+    <script src="configurations/app.js"></script>
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+        }
+
+        // Close mobile menu when link is clicked
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.body.classList.toggle('dark-theme');
+                themeToggle.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+                localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+            });
+
+            // Load saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeToggle.textContent = '☀️';
+            }
+        }
+    </script>
+</body>
+</html>
