@@ -87,10 +87,10 @@
 
         if (key === '1') {
             e.preventDefault();
-            window.location.href = 'Features/TaskTracker-GUI/main.html';
+            window.location.href = '../Feature/Task_Tracking_Feature/task-tracker.html';
         } else if (key === '2') {
             e.preventDefault();
-            window.location.href = 'Features/HabitTracjer-GUI/tcr.html';
+            window.location.href = '../Feature/Habit_Tracking_Feature/Dashboard/Habit_Dash.html';
         } else if (key === 't') {
             e.preventDefault();
             const toggle = document.querySelector('[data-theme-toggle]');
