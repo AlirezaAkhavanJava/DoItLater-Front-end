@@ -1,0 +1,464 @@
+/* ============================================================
+   DoItLater — Landing page (index)
+   Minimal animated entry with full 90s / Hana theme support.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Unified theme tokens (map both themes to the same names)
+   ------------------------------------------------------------ */
+[data-theme="90s"] {
+    --lp-bg: #faf7f2;
+    --lp-fg: #1a1a1a;
+    --lp-muted: #7a7a7a;
+    --lp-accent: #ff5c39;
+    --lp-accent-2: #ff7a5c;
+    --lp-surface: #ffffff;
+    --lp-line: #1a1a1a;
+    --lp-glow: rgba(255, 92, 57, .18);
+    --lp-logo-face: #ff5c39;
+    --lp-logo-ink: #1a1a1a;
+    --lp-dot-opacity: .07;
+    --lp-shadow: 4px 4px 0 var(--lp-line);
+}
+
+[data-theme="hana"] {
+    --lp-bg: #121212;
+    --lp-fg: #e8e8e8;
+    --lp-muted: #8a8a8a;
+    --lp-accent: #4a90e2;
+    --lp-accent-2: #5fa3ee;
+    --lp-surface: #1e1e1e;
+    --lp-line: #333333;
+    --lp-glow: rgba(74, 144, 226, .25);
+    --lp-logo-face: #ff5c39;
+    --lp-logo-ink: #1a1a1a;
+    --lp-dot-opacity: .04;
+    --lp-shadow: 0 0 0 transparent;
+}
+
+/* Fallback if themes.js hasn't set data-theme yet */
+html:not([data-theme]) {
+    --lp-bg: #121212;
+    --lp-fg: #e8e8e8;
+    --lp-muted: #8a8a8a;
+    --lp-accent: #4a90e2;
+    --lp-accent-2: #5fa3ee;
+    --lp-surface: #1e1e1e;
+    --lp-line: #333333;
+    --lp-glow: rgba(74, 144, 226, .25);
+    --lp-logo-face: #ff5c39;
+    --lp-logo-ink: #1a1a1a;
+    --lp-dot-opacity: .04;
+    --lp-shadow: 0 0 0 transparent;
+}
+
+/* ------------------------------------------------------------
+   2. Base
+   ------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    background: var(--lp-bg);
+    color: var(--lp-fg);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color .5s ease, color .5s ease;
+}
+
+/* ------------------------------------------------------------
+   3. Ambient background layers
+   ------------------------------------------------------------ */
+.bg-dots {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: var(--lp-dot-opacity);
+    background-image: radial-gradient(circle, var(--lp-fg) 1px, transparent 1px);
+    background-size: 28px 28px;
+    transition: opacity .5s ease;
+}
+
+.bg-glow {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 900px;
+    max-width: 90vmin;
+    max-height: 90vmin;
+    background: radial-gradient(circle, var(--lp-glow) 0%, transparent 60%);
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: 0;
+    animation: glowPulse 6s ease-in-out infinite;
+    transition: background .5s ease;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: .75; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.07); }
+}
+
+/* ------------------------------------------------------------
+   4. Scene layout
+   ------------------------------------------------------------ */
+.scene {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px clamp(24px, 5vw, 60px) 32px;
+    gap: 48px;
+}
+
+.stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* ------------------------------------------------------------
+   5. Theme toggle (floating top-right)
+   ------------------------------------------------------------ */
+.theme-toggle-wrap {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+/* ------------------------------------------------------------
+   6. Logo
+   ------------------------------------------------------------ */
+.logo-wrap {
+    position: relative;
+    width: clamp(140px, 20vw, 200px);
+    height: clamp(140px, 20vw, 200px);
+    margin-bottom: 44px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+    will-change: transform;
+    outline: none;
+}
+
+.logo-wrap:focus-visible {
+    outline: 2px solid var(--lp-accent);
+    outline-offset: 24px;
+    border-radius: 6px;
+}
+
+.logo-mark {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 20px 60px rgba(255, 92, 57, .35))
+            drop-shadow(0 0 30px rgba(255, 92, 57, .15));
+    animation: logoFloat 5s ease-in-out 1.5s infinite;
+    transition: filter .5s ease;
+}
+
+[data-theme="90s"] .logo-mark {
+    filter: drop-shadow(8px 8px 0 rgba(26, 26, 26, .08));
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* --- SVG elements --- */
+.logo-back {
+    fill: var(--lp-logo-ink);
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+}
+
+.logo-front {
+    fill: var(--lp-logo-face);
+    stroke: var(--lp-logo-ink);
+    stroke-width: 3;
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+}
+
+.logo-check {
+    stroke: var(--lp-logo-ink);
+    stroke-width: 18;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 130;
+    stroke-dashoffset: 130;
+}
+
+/* --- Entrance sequence --- */
+.logo-back  { animation: logoBackIn  .7s cubic-bezier(.34, 1.56, .64, 1) 0s     forwards; }
+.logo-front { animation: logoFrontIn .7s cubic-bezier(.34, 1.56, .64, 1) .12s   forwards; }
+.logo-check { animation: logoCheck   .6s cubic-bezier(.65, 0, .35, 1)  .55s   forwards; }
+
+@keyframes logoBackIn {
+    0%   { opacity: 0; transform: translate(80px, 80px) scale(.4) rotate(-30deg); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
+}
+
+@keyframes logoFrontIn {
+    0%   { opacity: 0; transform: translate(60px, 60px) scale(.4) rotate(-30deg); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
+}
+
+@keyframes logoCheck {
+    to { stroke-dashoffset: 0; }
+}
+
+/* --- Click ripple --- */
+.logo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.logo-wrap.pulse::after {
+    animation: logoRipple .9s cubic-bezier(.2, .8, .2, 1);
+}
+
+@keyframes logoRipple {
+    0%   { box-shadow: 0 0 0 0 var(--lp-glow); opacity: .9; }
+    100% { box-shadow: 0 0 0 90px transparent; opacity: 0; }
+}
+
+/* ------------------------------------------------------------
+   7. Brand block
+   ------------------------------------------------------------ */
+.brand { margin-bottom: 40px; }
+
+.brand-title {
+    margin: 0;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 900;
+    letter-spacing: -2.5px;
+    line-height: 1;
+    color: var(--lp-fg);
+    opacity: 0;
+    animation: brandIn .65s cubic-bezier(.2, .8, .2, 1) .9s forwards;
+}
+
+.brand-tagline {
+    margin: 14px 0 0;
+    font-size: clamp(14px, 1.4vw, 17px);
+    color: var(--lp-muted);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: brandIn .65s cubic-bezier(.2, .8, .2, 1) 1.1s forwards;
+}
+
+@keyframes brandIn {
+    0%   { opacity: 0; transform: translateY(14px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------
+   8. CTA buttons
+   ------------------------------------------------------------ */
+.cta-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: brandIn .65s cubic-bezier(.2, .8, .2, 1) 1.3s forwards;
+}
+
+.cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 170px;
+    padding: 16px 30px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--lp-fg);
+    background: var(--lp-surface);
+    border: 1px solid var(--lp-line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1),
+                box-shadow .18s ease,
+                border-color .18s ease,
+                background-color .18s ease,
+                color .18s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-primary {
+    background: var(--lp-accent);
+    color: #fff;
+    border-color: var(--lp-accent);
+}
+
+.cta-primary:hover { background: var(--lp-accent-2); border-color: var(--lp-accent-2); }
+.cta-secondary:hover { border-color: var(--lp-accent); color: var(--lp-accent); }
+
+.cta .key-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .2);
+    color: inherit;
+}
+
+.cta-secondary .key-hint { background: rgba(127, 127, 127, .15); }
+
+/* --- 90s brutalist skin --- */
+[data-theme="90s"] .cta {
+    border: 2px solid var(--lp-line);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--lp-line);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+}
+
+[data-theme="90s"] .cta:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--lp-line);
+}
+
+[data-theme="90s"] .cta-primary { color: var(--lp-fg); }
+[data-theme="90s"] .cta .key-hint {
+    background: #ffffff;
+    border: 2px solid var(--lp-line);
+    border-radius: 0;
+}
+
+/* --- Hana pill + glow skin --- */
+[data-theme="hana"] .cta { border-radius: 999px; padding: 16px 36px; font-weight: 600; }
+
+[data-theme="hana"] .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(74, 144, 226, .3);
+}
+
+[data-theme="hana"] .cta-primary:hover {
+    box-shadow: 0 12px 34px rgba(74, 144, 226, .5);
+}
+
+/* ------------------------------------------------------------
+   9. Hint footer
+   ------------------------------------------------------------ */
+.hint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--lp-muted);
+    font-weight: 600;
+    letter-spacing: .3px;
+    opacity: 0;
+    animation: brandIn .65s cubic-bezier(.2, .8, .2, 1) 1.6s forwards;
+}
+
+.hint-sep { opacity: .4; }
+
+.hint kbd {
+    display: inline-block;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 18px;
+    text-align: center;
+    background: var(--lp-surface);
+    color: var(--lp-fg);
+    border: 1px solid var(--lp-line);
+    border-radius: 4px;
+    letter-spacing: 0;
+}
+
+[data-theme="90s"] .hint kbd {
+    border-width: 2px;
+    border-radius: 0;
+    box-shadow: 1px 1px 0 var(--lp-line);
+}
+
+/* ------------------------------------------------------------
+   10. Responsive
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+    .scene { padding: 72px 20px 32px; gap: 32px; }
+
+    .logo-wrap {
+        width: 140px;
+        height: 140px;
+        margin-bottom: 32px;
+    }
+
+    .brand-title { letter-spacing: -1.5px; }
+
+    .cta-row { flex-direction: column; width: 100%; max-width: 320px; }
+    .cta { width: 100%; }
+
+    .hint {
+        font-size: 11px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------------------
+   11. Reduced motion
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+    .logo-back, .logo-front, .logo-check {
+        opacity: 1 !important;
+        transform: none !important;
+        stroke-dashoffset: 0 !important;
+    }
+
+    .bg-glow { animation: none; }
+    .logo-mark { animation: none; }
+}

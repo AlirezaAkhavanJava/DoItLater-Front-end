@@ -1,22 +1,16 @@
-# DoItLater — Frontend
+# React + Vite
 
-A lightweight, dependency-free web client for **DoItLater**, a personal productivity app that combines **habit tracking** and **task management**.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-Built with vanilla HTML, CSS, and JavaScript (ES modules) — no build step, no framework, no bundler. Just open an HTML file and it runs.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Features
+## React Compiler
 
-### Habit Tracker (`HabitTracjer-GUI/`)
-- **Weekly grid view** — 7-day columns per habit, navigate weeks forward/backward
-- **Today-only check-in** — past and future days are locked; only today is clickable
-- **Per-habit stats** — completed count, failed count, and completion rate
-- **Habit details page** — full profile with a **GitHub-style heatmap** of the last 52 weeks
-- **Edit and delete** habits from the detail page
-- **Priority levels** — Low / Medium / High / Critical, color-coded
-- **Auto color assignment** — each habit is assigned one of four accent colors
-- **Create habits via modal** — name, description, and priority
-- **Responsive layout** — collapses gracefully on tablet and mobile
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
+## Expanding the Oxlint configuration
 
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.

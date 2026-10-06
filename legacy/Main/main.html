@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="hana">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DoItLater — Track habits, finish tasks, get things done.">
+    <meta name="theme-color" content="#121212">
+    <title>DoItLater</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind (CDN, preflight off so it doesn't fight themes.css) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+
+    <!-- Theme system (global) -->
+    <link rel="stylesheet" href="../Global/Themes/Css/themes.css">
+
+    <!-- Landing page styles (local)-->
+    <link rel="stylesheet" href="main.css">
+
+    <!-- Apply saved theme before paint -->
+    <script src="../Global/Themes/Js/themes.js" data-default-theme="hana"></script>
+</head>
+
+<body>
+
+    <!-- Ambient background layers -->
+    <div class="bg-dots" aria-hidden="true"></div>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <!-- Theme toggle (top-right) -->
+    <div class="theme-toggle-wrap">
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme"></button>
+    </div>
+
+    <main class="scene">
+
+        <section class="stage">
+
+            <!-- Animated logo -->
+            <div class="logo-wrap" id="logoWrap" role="button" tabindex="0"
+                 aria-label="DoItLater — click to pulse">
+                <svg class="logo-mark" viewBox="0 0 240 240" aria-hidden="true">
+                    <!-- Offset shadow square (behind) -->
+                    <rect class="logo-back" x="60" y="60" width="140" height="140" rx="2" />
+                    <!-- Front square -->
+                    <rect class="logo-front" x="40" y="40" width="140" height="140" rx="2" />
+                    <!-- Checkmark -->
+                    <path class="logo-check" d="M 80 120 L 108 148 L 152 95" />
+                </svg>
+            </div>
+
+            <!-- Brand -->
+            <div class="brand">
+                <h1 class="brand-title">DoItLater</h1>
+                <p class="brand-tagline">Track habits. Finish tasks. Get things done.</p>
+            </div>
+
+            <!-- CTAs -->
+            <div class="cta-row">
+
+                <a href="../Feature/Task_Tracking_Feature/task-tracker.html" class="cta cta-primary" data-key="1">
+                    <span>Tasks</span>
+                    <kbd class="key-hint">1</kbd>
+                </a>
+
+
+                <a href="../Feature/Habit_Tracking_Feature/Dashboard/Habit_Dash.html" class="cta cta-secondary" data-key="2">
+                    <span>Habits</span>
+                    <kbd class="key-hint">2</kbd>
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- Footer hint -->
+        <footer class="hint" aria-hidden="true">
+            <span><kbd>1</kbd> Tasks</span>
+            <span class="hint-sep">·</span>
+            <span><kbd>2</kbd> Habits</span>
+            <span class="hint-sep">·</span>
+            <span><kbd>T</kbd> Theme</span>
+        </footer>
+
+    </main>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
